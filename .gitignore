@@ -8,5 +8,6 @@ _temp/
 out/test/
 test/fixture/esdoc/
 test/fixture/esdoc-cli/
+test/fixture/esdoc-glob/
 test/fixture/esdoc-plugin/
 test/fixture/esdoc-non-source/

@@ -1,0 +1,14 @@
+{
+  "source": ["./test/fixture/src/**/*.js"],
+  "destination": "./test/fixture/esdoc-glob",
+  "access": ["public", "protected", "private"],
+  "unexportIdentifier": true,
+  "debug": false,
+  "index": "./test/fixture/README.md",
+  "package": "./test/fixture/package.json",
+  "title": "ESDoc Test Fixture",
+  "test": {
+    "type": "mocha",
+    "source": ["./test/src-glob/**/*Test.js"]
+  }
+}

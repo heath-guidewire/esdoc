@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import assert from 'assert';
 import logger from 'color-logger';
+import glob from 'glob';
 import ASTUtil from './Util/ASTUtil.js';
 import ESParser from './Parser/ESParser';
 import PathResolver from './Util/PathResolver.js';
@@ -35,6 +36,13 @@ export default class ESDoc {
     Plugin.onStart();
     config = Plugin.onHandleConfig(config);
 
+    let globSource;
+
+    if (Array.isArray(config.source)) {
+      globSource = [].concat(...config.source.map((entry) => glob.sync(path.resolve(entry))));
+      config.source = '.';
+    }
+
     this._setDefaultConfig(config);
     this._deprecatedConfig(config);
 
@@ -59,7 +67,7 @@ export default class ESDoc {
     let asts = [];
     let sourceDirPath = path.resolve(config.source);
 
-    this._walk(config.source, (filePath)=>{
+    const processFile = (filePath) => {
       const relativeFilePath = path.relative(sourceDirPath, filePath);
       let match = false;
       for (let reg of includes) {
@@ -79,7 +87,13 @@ export default class ESDoc {
       results.push(...temp.results);
 
       asts.push({filePath: 'source' + path.sep + relativeFilePath, ast: temp.ast});
-    });
+    };
+
+    if (Array.isArray(globSource)) {
+      globSource.forEach(processFile);
+    } else {
+      this._walk(config.source, processFile);
+    }
 
     if (config.builtinExternal) {
       this._useBuiltinExternal(results);
@@ -106,9 +120,17 @@ export default class ESDoc {
   static _generateForTest(config, results, asts) {
     let includes = config.test.includes.map((v) => new RegExp(v));
     let excludes = config.test.excludes.map((v) => new RegExp(v));
+
+    let globSource;
+
+    if (Array.isArray(config.test.source)) {
+      globSource = [].concat(...config.test.source.map((entry) => glob.sync(path.resolve(entry))));
+      config.test.source = '.';
+    }
+
     let sourceDirPath = path.resolve(config.test.source);
 
-    this._walk(config.test.source, (filePath)=>{
+    const processFile = (filePath)=>{
       const relativeFilePath = path.relative(sourceDirPath, filePath);
       let match = false;
       for (let reg of includes) {
@@ -128,7 +150,13 @@ export default class ESDoc {
       results.push(...temp.results);
 
       asts.push({filePath: 'test' + path.sep + relativeFilePath, ast: temp.ast});
-    });
+    };
+
+    if (Array.isArray(globSource)) {
+      globSource.forEach(processFile);
+    } else {
+      this._walk(config.test.source, processFile);
+    }
   }
 
   /**
