@@ -20,6 +20,10 @@ var _NamingUtil = require('../Util/NamingUtil.js');
 
 var _NamingUtil2 = _interopRequireDefault(_NamingUtil);
 
+var _colorLogger = require('color-logger');
+
+var _colorLogger2 = _interopRequireDefault(_colorLogger);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31,7 +35,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Doc Class from Function declaration AST node.
  */
-
 var FunctionDoc = function (_AbstractDoc) {
   _inherits(FunctionDoc, _AbstractDoc);
 
@@ -60,7 +63,23 @@ var FunctionDoc = function (_AbstractDoc) {
       if (this._value.name) return;
 
       if (this._node.id) {
-        this._value.name = this._node.id.name;
+        switch (this._node.id.type) {
+          case 'Identifier':
+            this._value.name = this._node.id.name;
+            break;
+
+          case 'StringLiteral':
+            this._value.name = this._node.id.value;
+            break;
+
+          case 'MemberExpression':
+            this._value.name = this._node.id.object.name + '.' + this._node.id.property.name;
+            break;
+
+          default:
+            _colorLogger2.default.w('can not resolve name.');
+            this._value.name = undefined;
+        }
       } else {
         this._value.name = _NamingUtil2.default.filePathToName(this._pathResolver.filePath);
       }

@@ -35,7 +35,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Manual Output Builder class.
  */
-
 var ManualDocBuilder = function (_DocBuilder) {
   _inherits(ManualDocBuilder, _DocBuilder);
 

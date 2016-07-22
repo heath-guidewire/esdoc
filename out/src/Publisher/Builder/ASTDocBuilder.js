@@ -21,7 +21,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * AST Output Builder class.
  */
-
 var ASTDocBuilder = function (_DocBuilder) {
   _inherits(ASTDocBuilder, _DocBuilder);
 
@@ -31,7 +30,6 @@ var ASTDocBuilder = function (_DocBuilder) {
    * @param {AST[]} asts - all source code ASTs.
    * @param {ESDocConfig} config - ESDoc config object.
    */
-
   function ASTDocBuilder(data, asts, config) {
     _classCallCheck(this, ASTDocBuilder);
 

@@ -195,8 +195,8 @@ var LintDocBuilder = function (_DocBuilder) {
         if (codeParams[i] === '*') {
           // nothing
         } else if (codeParams[i] !== docParams[i]) {
-            return false;
-          }
+          return false;
+        }
       }
 
       return true;

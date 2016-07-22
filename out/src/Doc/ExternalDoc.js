@@ -31,7 +31,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Doc Class from virtual comment node of external.
  */
-
 var ExternalDoc = function (_AbstractDoc) {
   _inherits(ExternalDoc, _AbstractDoc);
 

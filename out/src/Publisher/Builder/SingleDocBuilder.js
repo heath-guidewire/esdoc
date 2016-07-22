@@ -26,7 +26,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * Single output builder class.
  * "single" means function, variable, typedef, external, etc...
  */
-
 var SingleDocBuilder = function (_DocBuilder) {
   _inherits(SingleDocBuilder, _DocBuilder);
 

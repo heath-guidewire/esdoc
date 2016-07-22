@@ -31,7 +31,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Doc Class from Member Expression AST node.
  */
-
 var MemberDoc = function (_AbstractDoc) {
   _inherits(MemberDoc, _AbstractDoc);
 

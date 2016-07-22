@@ -25,7 +25,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * File output html builder class.
  */
-
 var TestFileDocBuilder = function (_DocBuilder) {
   _inherits(TestFileDocBuilder, _DocBuilder);
 

@@ -29,7 +29,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Identifier output builder class.
  */
-
 var IdentifiersDocBuilder = function (_DocBuilder) {
   _inherits(IdentifiersDocBuilder, _DocBuilder);
 

@@ -29,7 +29,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Class Output Builder class.
  */
-
 var ClassDocBuilder = function (_DocBuilder) {
   _inherits(ClassDocBuilder, _DocBuilder);
 
@@ -423,8 +422,6 @@ var ClassDocBuilder = function (_DocBuilder) {
 
       var longnames = [].concat(_toConsumableArray(doc._custom_extends_chains || []));
 
-      //...doc.implements || [],
-      //...doc._custom_indirect_implements || [],
       var html = [];
       var _iteratorNormalCompletion7 = true;
       var _didIteratorError7 = false;

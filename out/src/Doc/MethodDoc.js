@@ -31,7 +31,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Doc Class from Method Definition AST node.
  */
-
 var MethodDoc = function (_AbstractDoc) {
   _inherits(MethodDoc, _AbstractDoc);
 

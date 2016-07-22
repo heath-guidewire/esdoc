@@ -24,6 +24,10 @@ var _colorLogger = require('color-logger');
 
 var _colorLogger2 = _interopRequireDefault(_colorLogger);
 
+var _glob = require('glob');
+
+var _glob2 = _interopRequireDefault(_glob);
+
 var _ASTUtil = require('./Util/ASTUtil.js');
 
 var _ASTUtil2 = _interopRequireDefault(_ASTUtil);
@@ -67,7 +71,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *   console.log(results);
  * });
  */
-
 var ESDoc = function () {
   function ESDoc() {
     _classCallCheck(this, ESDoc);
@@ -91,6 +94,17 @@ var ESDoc = function () {
       _Plugin2.default.init(config.plugins);
       _Plugin2.default.onStart();
       config = _Plugin2.default.onHandleConfig(config);
+
+      var globSource = void 0;
+
+      if (Array.isArray(config.source)) {
+        var _ref;
+
+        globSource = (_ref = []).concat.apply(_ref, _toConsumableArray(config.source.map(function (entry) {
+          return _glob2.default.sync(_path2.default.resolve(entry));
+        })));
+        config.source = '.';
+      }
 
       this._setDefaultConfig(config);
       this._deprecatedConfig(config);
@@ -120,7 +134,7 @@ var ESDoc = function () {
       var asts = [];
       var sourceDirPath = _path2.default.resolve(config.source);
 
-      this._walk(config.source, function (filePath) {
+      var processFile = function processFile(filePath) {
         var _results;
 
         var relativeFilePath = _path2.default.relative(sourceDirPath, filePath);
@@ -185,7 +199,13 @@ var ESDoc = function () {
         (_results = results).push.apply(_results, _toConsumableArray(temp.results));
 
         asts.push({ filePath: 'source' + _path2.default.sep + relativeFilePath, ast: temp.ast });
-      });
+      };
+
+      if (Array.isArray(globSource)) {
+        globSource.forEach(processFile);
+      } else {
+        this._walk(config.source, processFile);
+      }
 
       if (config.builtinExternal) {
         this._useBuiltinExternal(results);
@@ -221,9 +241,21 @@ var ESDoc = function () {
       var excludes = config.test.excludes.map(function (v) {
         return new RegExp(v);
       });
+
+      var globSource = void 0;
+
+      if (Array.isArray(config.test.source)) {
+        var _ref2;
+
+        globSource = (_ref2 = []).concat.apply(_ref2, _toConsumableArray(config.test.source.map(function (entry) {
+          return _glob2.default.sync(_path2.default.resolve(entry));
+        })));
+        config.test.source = '.';
+      }
+
       var sourceDirPath = _path2.default.resolve(config.test.source);
 
-      this._walk(config.test.source, function (filePath) {
+      var processFile = function processFile(filePath) {
         var relativeFilePath = _path2.default.relative(sourceDirPath, filePath);
         var match = false;
         var _iteratorNormalCompletion3 = true;
@@ -286,7 +318,13 @@ var ESDoc = function () {
         results.push.apply(results, _toConsumableArray(temp.results));
 
         asts.push({ filePath: 'test' + _path2.default.sep + relativeFilePath, ast: temp.ast });
-      });
+      };
+
+      if (Array.isArray(globSource)) {
+        globSource.forEach(processFile);
+      } else {
+        this._walk(config.test.source, processFile);
+      }
     }
 
     /**

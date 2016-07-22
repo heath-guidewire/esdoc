@@ -25,7 +25,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Static file output builder class.
  */
-
 var StaticFileBuilder = function (_DocBuilder) {
   _inherits(StaticFileBuilder, _DocBuilder);
 

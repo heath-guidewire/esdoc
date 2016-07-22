@@ -27,7 +27,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Search index of identifier builder class.
  */
-
 var SearchIndexBuilder = function (_DocBuilder) {
   _inherits(SearchIndexBuilder, _DocBuilder);
 

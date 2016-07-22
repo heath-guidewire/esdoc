@@ -25,7 +25,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Coverage output builder class.
  */
-
 var CoverageBuilder = function (_DocBuilder) {
   _inherits(CoverageBuilder, _DocBuilder);
 

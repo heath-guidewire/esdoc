@@ -39,7 +39,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Index output builder class.
  */
-
 var IndexDocBuilder = function (_DocBuilder) {
   _inherits(IndexDocBuilder, _DocBuilder);
 
@@ -49,7 +48,6 @@ var IndexDocBuilder = function (_DocBuilder) {
    * @param {ESDocConfig} config - use config to build output.
    * @param {CoverageObject} coverage - use coverage to build output.
    */
-
   function IndexDocBuilder(data, config, coverage) {
     _classCallCheck(this, IndexDocBuilder);
 

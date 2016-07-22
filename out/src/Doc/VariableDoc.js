@@ -31,7 +31,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Doc Class from Variable Declaration AST node.
  */
-
 var VariableDoc = function (_AbstractDoc) {
   _inherits(VariableDoc, _AbstractDoc);
 

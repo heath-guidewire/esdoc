@@ -23,7 +23,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Doc Class for Assignment AST node.
  */
-
 var AssignmentDoc = function (_AbstractDoc) {
   _inherits(AssignmentDoc, _AbstractDoc);
 

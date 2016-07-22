@@ -41,14 +41,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 /**
  * Builder base class.
  */
-
 var DocBuilder = function () {
   /**
    * create instance.
    * @param {Taffy} data - doc object database.
    * @param {ESDocConfig} config - esdoc config is used build output.
    */
-
   function DocBuilder(data, config) {
     _classCallCheck(this, DocBuilder);
 

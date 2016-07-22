@@ -37,7 +37,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Doc Class from Class Declaration AST node.
  */
-
 var ClassDoc = function (_AbstractDoc) {
   _inherits(ClassDoc, _AbstractDoc);
 
@@ -177,8 +176,8 @@ var ClassDoc = function (_AbstractDoc) {
                 var fullIdentifier = this._flattenMemberExpression(target);
                 var rootIdentifier = fullIdentifier.split('.')[0];
                 var rootLongname = this._resolveLongname(rootIdentifier);
-                var filePath = rootLongname.replace(/~.*/, '');
-                longnames.push(filePath + '~' + fullIdentifier);
+                var _filePath = rootLongname.replace(/~.*/, '');
+                longnames.push(_filePath + '~' + fullIdentifier);
                 break;
             }
           }

@@ -31,7 +31,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Doc class for virtual comment node of typedef.
  */
-
 var TypedefDoc = function (_AbstractDoc) {
   _inherits(TypedefDoc, _AbstractDoc);
 

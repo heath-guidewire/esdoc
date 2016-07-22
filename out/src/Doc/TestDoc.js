@@ -27,7 +27,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Doc Class from test code file.
  */
-
 var TestDoc = function (_AbstractDoc) {
   _inherits(TestDoc, _AbstractDoc);
 
