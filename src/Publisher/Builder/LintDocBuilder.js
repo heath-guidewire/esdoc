@@ -116,7 +116,7 @@ export default class LintDocBuilder extends DocBuilder {
    * @private
    */
   _showResult(results) {
-    const sourceDir = path.dirname(path.resolve(this._config.source));
+    const sourceDir = path.dirname(path.resolve(this._config.sourceDirPath));
     for (let result of results) {
       const doc = result.doc;
       const node = result.node;

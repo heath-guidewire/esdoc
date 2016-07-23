@@ -60,7 +60,7 @@ export default class SourceDocBuilder extends DocBuilder {
     }
 
     ice.loop('file', docs, (i, doc, ice)=>{
-      let sourceDirPath = path.resolve(config.source);
+      let sourceDirPath = path.resolve(this._config.sourceDirPath);
       let filePath = doc.longname;
       let absFilePath = path.resolve(path.dirname(sourceDirPath), filePath);
       let content = fs.readFileSync(absFilePath).toString();

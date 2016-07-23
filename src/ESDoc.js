@@ -5,6 +5,7 @@ import assert from 'assert';
 import logger from 'color-logger';
 import glob from 'glob';
 import ASTUtil from './Util/ASTUtil.js';
+import ObjectUtil from './Util/ObjectUtil.js';
 import ESParser from './Parser/ESParser';
 import PathResolver from './Util/PathResolver.js';
 import DocFactory from './Factory/DocFactory.js';
@@ -36,12 +37,7 @@ export default class ESDoc {
     Plugin.onStart();
     config = Plugin.onHandleConfig(config);
 
-    let globSource;
-
-    if (Array.isArray(config.source)) {
-      globSource = [].concat(...config.source.map((entry) => glob.sync(path.resolve(entry))));
-      config.source = '.';
-    }
+    let sourceFiles = ESDoc._hydrateSourceGlob(config, 'source', 'sourceDirPath');
 
     this._setDefaultConfig(config);
     this._deprecatedConfig(config);
@@ -65,9 +61,9 @@ export default class ESDoc {
 
     let results = [];
     let asts = [];
-    let sourceDirPath = path.resolve(config.source);
+    let sourceDirPath = path.resolve(config.sourceDirPath);
 
-    const processFile = (filePath) => {
+    sourceFiles.forEach((filePath) => {
       const relativeFilePath = path.relative(sourceDirPath, filePath);
       let match = false;
       for (let reg of includes) {
@@ -82,18 +78,12 @@ export default class ESDoc {
         if (relativeFilePath.match(reg)) return;
       }
 
-      let temp = this._traverse(config.source, filePath, packageName, mainFilePath);
+      let temp = this._traverse(config.sourceDirPath, filePath, packageName, mainFilePath);
       if (!temp) return;
       results.push(...temp.results);
 
       asts.push({filePath: 'source' + path.sep + relativeFilePath, ast: temp.ast});
-    };
-
-    if (Array.isArray(globSource)) {
-      globSource.forEach(processFile);
-    } else {
-      this._walk(config.source, processFile);
-    }
+    });
 
     if (config.builtinExternal) {
       this._useBuiltinExternal(results);
@@ -111,6 +101,60 @@ export default class ESDoc {
   }
 
   /**
+   * Looks up a glob or bare path entry in `config` via `globEntry` then hydrates a list of files finally
+   * storing any generated modification back to the accessor entries.
+   *
+   * @param {object}  config - The ESDoc configuration file.
+   * @param {string}  globEntry - An accessor string to covert to / process as a glob path.
+   * @param {string}  globPathEntry - An accessor string to store the path of the glob entry in config.
+   *
+   * @returns {Array<string>}
+   * @private
+   */
+  static _hydrateSourceGlob(config, globEntry, globPathEntry)
+  {
+    let files;
+
+    let sourceGlob = ObjectUtil.safeAccess(config, globEntry);
+    let globPath = ObjectUtil.safeAccess(config, globPathEntry);
+
+    if (Array.isArray(sourceGlob)) {
+      files = [].concat(...sourceGlob.map((entry) => glob.sync(path.resolve(entry))));
+    }
+    else if (typeof sourceGlob === 'string') {
+      if (sourceGlob.includes('*')) {
+        files = glob.sync(sourceGlob);
+      }
+      else {
+        // If globPath is already defined then set it or use sourceGlob as it is a bare path. This maintains
+        // original ESDoc functionality.
+        globPath = typeof globPath === 'string' ? globPath : sourceGlob;
+
+        // Determine if any included trailing path separator is included.
+        const results = (/([\\/])$/).exec(sourceGlob);
+        const pathSep = results !== null ? results[0] : path.sep;
+
+        // Build all inclusive glob based on bare path.
+        sourceGlob = sourceGlob.endsWith(pathSep) ? `${sourceGlob}**${pathSep}*` :
+         `${sourceGlob}${pathSep}**${pathSep}*`;
+
+        files = glob.sync(sourceGlob);
+      }
+    }
+    else {
+      throw new Error(`ESDoc._hydrateSourceGlob error: Invalid source glob ${JSON.stringify(sourceGlob)}.`);
+    }
+
+    // If globPath is already defined then set it or set the default root path.
+    globPath = typeof globPath === 'string' ? globPath : '.';
+
+    ObjectUtil.safeSet(config, globEntry, sourceGlob);
+    ObjectUtil.safeSet(config, globPathEntry, globPath);
+
+    return files;
+  }
+
+  /**
    * Generate document from test code.
    * @param {ESDocConfig} config - config for generating.
    * @param {DocObject[]} results - push DocObject to this.
@@ -121,16 +165,11 @@ export default class ESDoc {
     let includes = config.test.includes.map((v) => new RegExp(v));
     let excludes = config.test.excludes.map((v) => new RegExp(v));
 
-    let globSource;
+    let sourceFiles = ESDoc._hydrateSourceGlob(config, 'test.source', 'test.dirPath');
 
-    if (Array.isArray(config.test.source)) {
-      globSource = [].concat(...config.test.source.map((entry) => glob.sync(path.resolve(entry))));
-      config.test.source = '.';
-    }
+    let sourceDirPath = path.resolve(config.test.dirPath);
 
-    let sourceDirPath = path.resolve(config.test.source);
-
-    const processFile = (filePath)=>{
+    sourceFiles.forEach((filePath)=>{
       const relativeFilePath = path.relative(sourceDirPath, filePath);
       let match = false;
       for (let reg of includes) {
@@ -145,18 +184,12 @@ export default class ESDoc {
         if (relativeFilePath.match(reg)) return;
       }
 
-      let temp = this._traverseForTest(config.test.type, config.test.source, filePath);
+      let temp = this._traverseForTest(config.test.type, config.test.dirPath, filePath);
       if (!temp) return;
       results.push(...temp.results);
 
       asts.push({filePath: 'test' + path.sep + relativeFilePath, ast: temp.ast});
-    };
-
-    if (Array.isArray(globSource)) {
-      globSource.forEach(processFile);
-    } else {
-      this._walk(config.test.source, processFile);
-    }
+    });
   }
 
   /**
@@ -215,34 +248,16 @@ export default class ESDoc {
    * @see {@link src/BuiltinExternal/ECMAScriptExternal.js}
    */
   static _useBuiltinExternal(results) {
-    let dirPath = path.resolve(__dirname, './BuiltinExternal/');
-    this._walk(dirPath, (filePath)=>{
+    let dirPath = path.resolve(__dirname, `.${path.sep}BuiltinExternal${path.sep}`);
+
+    const externalPaths = glob.sync(`${dirPath}${path.sep}**${path.sep}*`);
+
+    externalPaths.forEach((filePath)=>{
       let temp = this._traverse(dirPath, filePath);
       temp.results.forEach((v)=> v.builtinExternal = true);
       let res = temp.results.filter(v => v.kind === 'external');
       results.push(...res);
     });
-  }
-
-  /**
-   * walk recursive in directory.
-   * @param {string} dirPath - target directory path.
-   * @param {function(entryPath: string)} callback - callback for find file.
-   * @private
-   */
-  static _walk(dirPath, callback) {
-    let entries = fs.readdirSync(dirPath);
-
-    for (let entry of entries) {
-      let entryPath = path.resolve(dirPath, entry);
-      let stat = fs.statSync(entryPath);
-
-      if (stat.isFile()) {
-        callback(entryPath);
-      } else if (stat.isDirectory()) {
-        this._walk(entryPath, callback);
-      }
-    }
   }
 
   /**
