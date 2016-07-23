@@ -103,7 +103,7 @@ var SourceDocBuilder = function (_DocBuilder) {
       }
 
       ice.loop('file', docs, function (i, doc, ice) {
-        var sourceDirPath = _path2.default.resolve(config.source);
+        var sourceDirPath = _path2.default.resolve(_this2._config.sourceDirPath);
         var filePath = doc.longname;
         var absFilePath = _path2.default.resolve(_path2.default.dirname(sourceDirPath), filePath);
         var content = _fs2.default.readFileSync(absFilePath).toString();

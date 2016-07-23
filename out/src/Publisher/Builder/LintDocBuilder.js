@@ -215,7 +215,7 @@ var LintDocBuilder = function (_DocBuilder) {
   }, {
     key: '_showResult',
     value: function _showResult(results) {
-      var sourceDir = _path2.default.dirname(_path2.default.resolve(this._config.source));
+      var sourceDir = _path2.default.dirname(_path2.default.resolve(this._config.sourceDirPath));
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
       var _iteratorError3 = undefined;

@@ -2,6 +2,7 @@
  * ESDoc config object.
  * @typedef {Object} ESDocConfig
  * @property {!string} source - directory path of javascript source code.
+ * @property {!string} sourceDirPath - A specific directory path to set as the source root.
  * @property {!string} destination - directory path of output.
  * @property {string} [title]
  * @property {string[]} [includes=["\\.(js|es6)$"]]
@@ -18,7 +19,7 @@
  * @property {string} [importPathPrefix=""]
  * @property {string[]} [styles=[]]
  * @property {string[]} [scripts=[]]
- * @property {{type: string, source: string, includes: string[], excludes: string[]}} test
+ * @property {{type: string, source: string, dirPath: string, includes: string[], excludes: string[]}} test
  * @property {Object} [manual]
  * @property {string} manual.asset
  * @property {string[]} manual.overview

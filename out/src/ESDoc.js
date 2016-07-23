@@ -32,6 +32,10 @@ var _ASTUtil = require('./Util/ASTUtil.js');
 
 var _ASTUtil2 = _interopRequireDefault(_ASTUtil);
 
+var _ObjectUtil = require('./Util/ObjectUtil.js');
+
+var _ObjectUtil2 = _interopRequireDefault(_ObjectUtil);
+
 var _ESParser = require('./Parser/ESParser');
 
 var _ESParser2 = _interopRequireDefault(_ESParser);
@@ -95,16 +99,7 @@ var ESDoc = function () {
       _Plugin2.default.onStart();
       config = _Plugin2.default.onHandleConfig(config);
 
-      var globSource = void 0;
-
-      if (Array.isArray(config.source)) {
-        var _ref;
-
-        globSource = (_ref = []).concat.apply(_ref, _toConsumableArray(config.source.map(function (entry) {
-          return _glob2.default.sync(_path2.default.resolve(entry));
-        })));
-        config.source = '.';
-      }
+      var sourceFiles = ESDoc._hydrateSourceGlob(config, 'source', 'sourceDirPath');
 
       this._setDefaultConfig(config);
       this._deprecatedConfig(config);
@@ -132,9 +127,9 @@ var ESDoc = function () {
 
       var results = [];
       var asts = [];
-      var sourceDirPath = _path2.default.resolve(config.source);
+      var sourceDirPath = _path2.default.resolve(config.sourceDirPath);
 
-      var processFile = function processFile(filePath) {
+      sourceFiles.forEach(function (filePath) {
         var _results;
 
         var relativeFilePath = _path2.default.relative(sourceDirPath, filePath);
@@ -194,18 +189,12 @@ var ESDoc = function () {
           }
         }
 
-        var temp = _this._traverse(config.source, filePath, packageName, mainFilePath);
+        var temp = _this._traverse(config.sourceDirPath, filePath, packageName, mainFilePath);
         if (!temp) return;
         (_results = results).push.apply(_results, _toConsumableArray(temp.results));
 
         asts.push({ filePath: 'source' + _path2.default.sep + relativeFilePath, ast: temp.ast });
-      };
-
-      if (Array.isArray(globSource)) {
-        globSource.forEach(processFile);
-      } else {
-        this._walk(config.source, processFile);
-      }
+      });
 
       if (config.builtinExternal) {
         this._useBuiltinExternal(results);
@@ -220,6 +209,62 @@ var ESDoc = function () {
       publisher(results, asts, config);
 
       _Plugin2.default.onComplete();
+    }
+
+    /**
+     * Looks up a glob or bare path entry in `config` via `globEntry` then hydrates a list of files finally
+     * storing any generated modification back to the accessor entries.
+     *
+     * @param {object}  config - The ESDoc configuration file.
+     * @param {string}  globEntry - An accessor string to covert to / process as a glob path.
+     * @param {string}  globPathEntry - An accessor string to store the path of the glob entry in config.
+     *
+     * @returns {Array<string>}
+     * @private
+     */
+
+  }, {
+    key: '_hydrateSourceGlob',
+    value: function _hydrateSourceGlob(config, globEntry, globPathEntry) {
+      var files = void 0;
+
+      var sourceGlob = _ObjectUtil2.default.safeAccess(config, globEntry);
+      var globPath = _ObjectUtil2.default.safeAccess(config, globPathEntry);
+
+      if (Array.isArray(sourceGlob)) {
+        var _ref;
+
+        files = (_ref = []).concat.apply(_ref, _toConsumableArray(sourceGlob.map(function (entry) {
+          return _glob2.default.sync(_path2.default.resolve(entry));
+        })));
+      } else if (typeof sourceGlob === 'string') {
+        if (sourceGlob.includes('*')) {
+          files = _glob2.default.sync(sourceGlob);
+        } else {
+          // If globPath is already defined then set it or use sourceGlob as it is a bare path. This maintains
+          // original ESDoc functionality.
+          globPath = typeof globPath === 'string' ? globPath : sourceGlob;
+
+          // Determine if any included trailing path separator is included.
+          var results = /([\\/])$/.exec(sourceGlob);
+          var pathSep = results !== null ? results[0] : _path2.default.sep;
+
+          // Build all inclusive glob based on bare path.
+          sourceGlob = sourceGlob.endsWith(pathSep) ? sourceGlob + '**' + pathSep + '*' : '' + sourceGlob + pathSep + '**' + pathSep + '*';
+
+          files = _glob2.default.sync(sourceGlob);
+        }
+      } else {
+        throw new Error('ESDoc._hydrateSourceGlob error: Invalid source glob ' + JSON.stringify(sourceGlob) + '.');
+      }
+
+      // If globPath is already defined then set it or set the default root path.
+      globPath = typeof globPath === 'string' ? globPath : '.';
+
+      _ObjectUtil2.default.safeSet(config, globEntry, sourceGlob);
+      _ObjectUtil2.default.safeSet(config, globPathEntry, globPath);
+
+      return files;
     }
 
     /**
@@ -242,20 +287,11 @@ var ESDoc = function () {
         return new RegExp(v);
       });
 
-      var globSource = void 0;
+      var sourceFiles = ESDoc._hydrateSourceGlob(config, 'test.source', 'test.dirPath');
 
-      if (Array.isArray(config.test.source)) {
-        var _ref2;
+      var sourceDirPath = _path2.default.resolve(config.test.dirPath);
 
-        globSource = (_ref2 = []).concat.apply(_ref2, _toConsumableArray(config.test.source.map(function (entry) {
-          return _glob2.default.sync(_path2.default.resolve(entry));
-        })));
-        config.test.source = '.';
-      }
-
-      var sourceDirPath = _path2.default.resolve(config.test.source);
-
-      var processFile = function processFile(filePath) {
+      sourceFiles.forEach(function (filePath) {
         var relativeFilePath = _path2.default.relative(sourceDirPath, filePath);
         var match = false;
         var _iteratorNormalCompletion3 = true;
@@ -313,18 +349,12 @@ var ESDoc = function () {
           }
         }
 
-        var temp = _this2._traverseForTest(config.test.type, config.test.source, filePath);
+        var temp = _this2._traverseForTest(config.test.type, config.test.dirPath, filePath);
         if (!temp) return;
         results.push.apply(results, _toConsumableArray(temp.results));
 
         asts.push({ filePath: 'test' + _path2.default.sep + relativeFilePath, ast: temp.ast });
-      };
-
-      if (Array.isArray(globSource)) {
-        globSource.forEach(processFile);
-      } else {
-        this._walk(config.test.source, processFile);
-      }
+      });
     }
 
     /**
@@ -392,8 +422,11 @@ var ESDoc = function () {
     value: function _useBuiltinExternal(results) {
       var _this3 = this;
 
-      var dirPath = _path2.default.resolve(__dirname, './BuiltinExternal/');
-      this._walk(dirPath, function (filePath) {
+      var dirPath = _path2.default.resolve(__dirname, '.' + _path2.default.sep + 'BuiltinExternal' + _path2.default.sep);
+
+      var externalPaths = _glob2.default.sync('' + dirPath + _path2.default.sep + '**' + _path2.default.sep + '*');
+
+      externalPaths.forEach(function (filePath) {
         var temp = _this3._traverse(dirPath, filePath);
         temp.results.forEach(function (v) {
           return v.builtinExternal = true;
@@ -403,51 +436,6 @@ var ESDoc = function () {
         });
         results.push.apply(results, _toConsumableArray(res));
       });
-    }
-
-    /**
-     * walk recursive in directory.
-     * @param {string} dirPath - target directory path.
-     * @param {function(entryPath: string)} callback - callback for find file.
-     * @private
-     */
-
-  }, {
-    key: '_walk',
-    value: function _walk(dirPath, callback) {
-      var entries = _fs2.default.readdirSync(dirPath);
-
-      var _iteratorNormalCompletion5 = true;
-      var _didIteratorError5 = false;
-      var _iteratorError5 = undefined;
-
-      try {
-        for (var _iterator5 = entries[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-          var entry = _step5.value;
-
-          var entryPath = _path2.default.resolve(dirPath, entry);
-          var stat = _fs2.default.statSync(entryPath);
-
-          if (stat.isFile()) {
-            callback(entryPath);
-          } else if (stat.isDirectory()) {
-            this._walk(entryPath, callback);
-          }
-        }
-      } catch (err) {
-        _didIteratorError5 = true;
-        _iteratorError5 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion5 && _iterator5.return) {
-            _iterator5.return();
-          }
-        } finally {
-          if (_didIteratorError5) {
-            throw _iteratorError5;
-          }
-        }
-      }
     }
 
     /**
