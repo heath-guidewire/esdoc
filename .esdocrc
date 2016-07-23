@@ -7,6 +7,9 @@
   "index": "./README.md",
   "package": "./package.json",
   "title": "ESDoc",
+  "plugins": [
+    { "name": "esdoc-plugin-enhanced-navigation" }
+  ],
   "test": {
     "type": "mocha",
     "source": "./test/src"
