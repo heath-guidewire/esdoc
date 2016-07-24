@@ -122,24 +122,19 @@ export default class ESDoc {
       files = [].concat(...sourceGlob.map((entry) => glob.sync(path.resolve(entry))));
     }
     else if (typeof sourceGlob === 'string') {
-      if (sourceGlob.includes('*')) {
-        files = glob.sync(sourceGlob);
-      }
-      else {
-        // If globPath is already defined then set it or use sourceGlob as it is a bare path. This maintains
-        // original ESDoc functionality.
-        globPath = typeof globPath === 'string' ? globPath : sourceGlob;
+      // If globPath is already defined then set it or use sourceGlob as it is a bare path. This maintains
+      // original ESDoc functionality.
+      globPath = typeof globPath === 'string' ? globPath : sourceGlob;
 
-        // Determine if any included trailing path separator is included.
-        const results = (/([\\/])$/).exec(sourceGlob);
-        const pathSep = results !== null ? results[0] : path.sep;
+      // Determine if any included trailing path separator is included.
+      const results = (/([\\/])$/).exec(sourceGlob);
+      const pathSep = results !== null ? results[0] : path.sep;
 
-        // Build all inclusive glob based on bare path.
-        sourceGlob = sourceGlob.endsWith(pathSep) ? `${sourceGlob}**${pathSep}*` :
-         `${sourceGlob}${pathSep}**${pathSep}*`;
+      // Build all inclusive glob based on bare path.
+      sourceGlob = sourceGlob.endsWith(pathSep) ? `${sourceGlob}**${pathSep}*` :
+       `${sourceGlob}${pathSep}**${pathSep}*`;
 
-        files = glob.sync(sourceGlob);
-      }
+      files = glob.sync(sourceGlob);
     }
     else {
       throw new Error(`ESDoc._hydrateSourceGlob error: Invalid source glob ${JSON.stringify(sourceGlob)}.`);

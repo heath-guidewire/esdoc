@@ -8,7 +8,7 @@ export default class ObjectUtil
    * entries to walk. To access deeper entries into the object format the accessor string with `.` between entries
    * to walk.
    *
-   * @param {object}   object - An object to access entry data.
+   * @param {object}   data - An object to access entry data.
    * @param {string}   accessor - A string describing the entries to access.
    * @param {*}        defaultValue - (Optional) A default value to return if an entry for accessor is not found.
    *
