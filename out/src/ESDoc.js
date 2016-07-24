@@ -238,22 +238,18 @@ var ESDoc = function () {
           return _glob2.default.sync(_path2.default.resolve(entry));
         })));
       } else if (typeof sourceGlob === 'string') {
-        if (sourceGlob.includes('*')) {
-          files = _glob2.default.sync(sourceGlob);
-        } else {
-          // If globPath is already defined then set it or use sourceGlob as it is a bare path. This maintains
-          // original ESDoc functionality.
-          globPath = typeof globPath === 'string' ? globPath : sourceGlob;
+        // If globPath is already defined then set it or use sourceGlob as it is a bare path. This maintains
+        // original ESDoc functionality.
+        globPath = typeof globPath === 'string' ? globPath : sourceGlob;
 
-          // Determine if any included trailing path separator is included.
-          var results = /([\\/])$/.exec(sourceGlob);
-          var pathSep = results !== null ? results[0] : _path2.default.sep;
+        // Determine if any included trailing path separator is included.
+        var results = /([\\/])$/.exec(sourceGlob);
+        var pathSep = results !== null ? results[0] : _path2.default.sep;
 
-          // Build all inclusive glob based on bare path.
-          sourceGlob = sourceGlob.endsWith(pathSep) ? sourceGlob + '**' + pathSep + '*' : '' + sourceGlob + pathSep + '**' + pathSep + '*';
+        // Build all inclusive glob based on bare path.
+        sourceGlob = sourceGlob.endsWith(pathSep) ? sourceGlob + '**' + pathSep + '*' : '' + sourceGlob + pathSep + '**' + pathSep + '*';
 
-          files = _glob2.default.sync(sourceGlob);
-        }
+        files = _glob2.default.sync(sourceGlob);
       } else {
         throw new Error('ESDoc._hydrateSourceGlob error: Invalid source glob ' + JSON.stringify(sourceGlob) + '.');
       }
