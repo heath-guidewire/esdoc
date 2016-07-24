@@ -119,6 +119,7 @@ export default class ESDoc {
     let globPath = ObjectUtil.safeAccess(config, globPathEntry);
 
     if (Array.isArray(sourceGlob)) {
+      // If the sourceGlob is an array assume it is an array of globs instead of paths.
       files = [].concat(...sourceGlob.map((entry) => glob.sync(path.resolve(entry))));
     }
     else if (typeof sourceGlob === 'string') {
@@ -130,14 +131,14 @@ export default class ESDoc {
       const results = (/([\\/])$/).exec(sourceGlob);
       const pathSep = results !== null ? results[0] : path.sep;
 
-      // Build all inclusive glob based on bare path.
-      sourceGlob = sourceGlob.endsWith(pathSep) ? `${sourceGlob}**${pathSep}*` :
-       `${sourceGlob}${pathSep}**${pathSep}*`;
+      // Build all inclusive glob based on bare path and covert it into an array containing it.
+      sourceGlob = sourceGlob.endsWith(pathSep) ? [`${sourceGlob}**${pathSep}*`] :
+       [`${sourceGlob}${pathSep}**${pathSep}*`];
 
-      files = glob.sync(sourceGlob);
+      files = [].concat(...sourceGlob.map((entry) => glob.sync(path.resolve(entry))));
     }
     else {
-      throw new Error(`ESDoc._hydrateSourceGlob error: Invalid source glob ${JSON.stringify(sourceGlob)}.`);
+      throw new Error(`ESDoc._hydrateSourceGlob error: Invalid source path / glob ${JSON.stringify(sourceGlob)}.`);
     }
 
     // If globPath is already defined then set it or set the default root path.
