@@ -234,10 +234,13 @@ var ESDoc = function () {
       if (Array.isArray(sourceGlob)) {
         var _ref;
 
+        // If the sourceGlob is an array assume it is an array of globs instead of paths.
         files = (_ref = []).concat.apply(_ref, _toConsumableArray(sourceGlob.map(function (entry) {
           return _glob2.default.sync(_path2.default.resolve(entry));
         })));
       } else if (typeof sourceGlob === 'string') {
+        var _ref2;
+
         // If globPath is already defined then set it or use sourceGlob as it is a bare path. This maintains
         // original ESDoc functionality.
         globPath = typeof globPath === 'string' ? globPath : sourceGlob;
@@ -246,12 +249,14 @@ var ESDoc = function () {
         var results = /([\\/])$/.exec(sourceGlob);
         var pathSep = results !== null ? results[0] : _path2.default.sep;
 
-        // Build all inclusive glob based on bare path.
-        sourceGlob = sourceGlob.endsWith(pathSep) ? sourceGlob + '**' + pathSep + '*' : '' + sourceGlob + pathSep + '**' + pathSep + '*';
+        // Build all inclusive glob based on bare path and covert it into an array containing it.
+        sourceGlob = sourceGlob.endsWith(pathSep) ? [sourceGlob + '**' + pathSep + '*'] : ['' + sourceGlob + pathSep + '**' + pathSep + '*'];
 
-        files = _glob2.default.sync(sourceGlob);
+        files = (_ref2 = []).concat.apply(_ref2, _toConsumableArray(sourceGlob.map(function (entry) {
+          return _glob2.default.sync(_path2.default.resolve(entry));
+        })));
       } else {
-        throw new Error('ESDoc._hydrateSourceGlob error: Invalid source glob ' + JSON.stringify(sourceGlob) + '.');
+        throw new Error('ESDoc._hydrateSourceGlob error: Invalid source path / glob ' + JSON.stringify(sourceGlob) + '.');
       }
 
       // If globPath is already defined then set it or set the default root path.
