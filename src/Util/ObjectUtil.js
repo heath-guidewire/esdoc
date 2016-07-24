@@ -56,13 +56,13 @@ export default class ObjectUtil
       // If the next level of object access is undefined then create a new object entry.
       if (typeof data[access[cntr]] === 'undefined') { data[access[cntr]] = {}; }
 
-      // Abort if the next level is null or not an object and containing a value.
-      if (data[access[cntr]] === null || typeof data[access[cntr]] !== 'object') { return false; }
-
       if (cntr === access.length - 1) {
         data[access[cntr]] = value;
       }
       else {
+        // Abort if the next level is null or not an object and containing a value.
+        if (data[access[cntr]] === null || typeof data[access[cntr]] !== 'object') { return false; }
+
         data = data[access[cntr]];
       }
     }
