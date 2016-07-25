@@ -5,7 +5,6 @@ import assert from 'assert';
 import logger from 'color-logger';
 import glob from 'glob';
 import ASTUtil from './Util/ASTUtil.js';
-import ObjectUtil from './Util/ObjectUtil.js';
 import ESParser from './Parser/ESParser';
 import PathResolver from './Util/PathResolver.js';
 import DocFactory from './Factory/DocFactory.js';
@@ -115,8 +114,8 @@ export default class ESDoc {
   {
     let files;
 
-    let sourceGlob = ObjectUtil.safeAccess(config, globEntry);
-    let globPath = ObjectUtil.safeAccess(config, globPathEntry);
+    let sourceGlob = config[globEntry];
+    let globPath = config[globPathEntry];
 
     if (Array.isArray(sourceGlob)) {
       // If the sourceGlob is an array assume it is an array of globs instead of paths.
@@ -144,8 +143,8 @@ export default class ESDoc {
     // If globPath is already defined then set it or set the default root path.
     globPath = typeof globPath === 'string' ? globPath : '.';
 
-    ObjectUtil.safeSet(config, globEntry, sourceGlob);
-    ObjectUtil.safeSet(config, globPathEntry, globPath);
+    config[globEntry] = sourceGlob;
+    config[globPathEntry] = globPath;
 
     return files;
   }
@@ -161,7 +160,8 @@ export default class ESDoc {
     let includes = config.test.includes.map((v) => new RegExp(v));
     let excludes = config.test.excludes.map((v) => new RegExp(v));
 
-    let sourceFiles = ESDoc._hydrateSourceGlob(config, 'test.source', 'test.dirPath');
+//    let sourceFiles = ESDoc._hydrateSourceGlob(config, 'test.source', 'test.dirPath');
+    let sourceFiles = ESDoc._hydrateSourceGlob(config.test, 'source', 'dirPath');
 
     let sourceDirPath = path.resolve(config.test.dirPath);
 
