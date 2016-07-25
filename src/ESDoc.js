@@ -160,7 +160,6 @@ export default class ESDoc {
     let includes = config.test.includes.map((v) => new RegExp(v));
     let excludes = config.test.excludes.map((v) => new RegExp(v));
 
-//    let sourceFiles = ESDoc._hydrateSourceGlob(config, 'test.source', 'test.dirPath');
     let sourceFiles = ESDoc._hydrateSourceGlob(config.test, 'source', 'dirPath');
 
     let sourceDirPath = path.resolve(config.test.dirPath);
