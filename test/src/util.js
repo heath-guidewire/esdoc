@@ -56,6 +56,13 @@ _assert.notIncludes = function($el, selector, expect, attr) {
   assert(actual.includes(expect) === false, `selector: "${selector}"`);
 };
 
+_assert.notFound = function($el, selector) {
+  if (selector) {
+    const $els = $el.find(selector);
+    if ($els.length) _assert(false, `node is found. selector = "${selector}"`);
+  }
+};
+
 export var assert = _assert;
 
 const consoleLog = console.log;
