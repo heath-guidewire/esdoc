@@ -10,6 +10,10 @@ var _iceCap = require('ice-cap');
 
 var _iceCap2 = _interopRequireDefault(_iceCap);
 
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
 var _fsExtra = require('fs-extra');
 
 var _fsExtra2 = _interopRequireDefault(_fsExtra);
@@ -80,13 +84,36 @@ var ManualDocBuilder = function (_DocBuilder) {
           var item = _step.value;
 
           if (!item.paths) continue;
-          var _fileName = this._getManualOutputFileName(item);
-          var _baseUrl = this._getBaseUrl(_fileName);
-          ice.load('content', this._buildManual(item), _iceCap2.default.MODE_WRITE);
-          ice.load('nav', this._buildManualNav(manualConfig), _iceCap2.default.MODE_WRITE);
-          ice.text('title', item.label, _iceCap2.default.MODE_WRITE);
-          ice.attr('baseUrl', 'href', _baseUrl, _iceCap2.default.MODE_WRITE);
-          callback(ice.html, _fileName);
+          var _iteratorNormalCompletion2 = true;
+          var _didIteratorError2 = false;
+          var _iteratorError2 = undefined;
+
+          try {
+            for (var _iterator2 = item.paths[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var filePath = _step2.value;
+
+              var _fileName = this._getManualOutputFileName(item, filePath);
+              var _baseUrl = this._getBaseUrl(_fileName);
+              ice.load('content', this._buildManual(item, filePath), _iceCap2.default.MODE_WRITE);
+              ice.load('nav', this._buildManualNav(manualConfig), _iceCap2.default.MODE_WRITE);
+              ice.text('title', item.label, _iceCap2.default.MODE_WRITE);
+              ice.attr('baseUrl', 'href', _baseUrl, _iceCap2.default.MODE_WRITE);
+              callback(ice.html, _fileName);
+            }
+          } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
+              }
+            } finally {
+              if (_didIteratorError2) {
+                throw _iteratorError2;
+              }
+            }
+          }
         }
       } catch (err) {
         _didIteratorError = true;
@@ -119,16 +146,100 @@ var ManualDocBuilder = function (_DocBuilder) {
     value: function _getManualConfig() {
       var m = this._config.manual;
       var manualConfig = [];
-      if (m.overview) manualConfig.push({ label: 'Overview', paths: m.overview });
-      if (m.installation) manualConfig.push({ label: 'Installation', paths: m.installation });
-      if (m.tutorial) manualConfig.push({ label: 'Tutorial', paths: m.tutorial });
-      if (m.usage) manualConfig.push({ label: 'Usage', paths: m.usage });
-      if (m.configuration) manualConfig.push({ label: 'Configuration', paths: m.configuration });
-      if (m.example) manualConfig.push({ label: 'Example', paths: m.example });
-      manualConfig.push({ label: 'Reference', fileName: 'identifiers.html', references: true });
-      if (m.faq) manualConfig.push({ label: 'FAQ', paths: m.faq });
-      if (m.changelog) manualConfig.push({ label: 'Changelog', paths: m.changelog });
+      if (m.overview) manualConfig.push({ label: 'Overview', paths: m.overview, type: 'overview' });
+      if (m.installation) manualConfig.push({ label: 'Installation', paths: m.installation, type: 'installation' });
+      if (m.tutorial) manualConfig.push({ label: 'Tutorial', paths: m.tutorial, type: 'tutorial' });
+      if (m.usage) manualConfig.push({ label: 'Usage', paths: m.usage, type: 'usage' });
+      if (m.configuration) manualConfig.push({ label: 'Configuration', paths: m.configuration, type: 'configuration' });
+      if (m.example) manualConfig.push({ label: 'Example', paths: m.example, type: 'example' });
+      manualConfig.push({ label: 'Reference', fileName: 'identifiers.html', references: true, type: 'reference' });
+      if (m.faq) manualConfig.push({ label: 'FAQ', paths: m.faq, type: 'faq' });
+      if (m.changelog) manualConfig.push({ label: 'Changelog', paths: m.changelog, type: 'changelog' });
+      if (Array.isArray(m.customPages)) this._addCustomPages(manualConfig, m.customPages);
       return manualConfig;
+    }
+  }, {
+    key: '_validateCustomPageConfig',
+    value: function _validateCustomPageConfig(existingTypes, customPage) {
+      if (typeof customPage.label !== 'string') {
+        console.log('Custom manual page config "label" is not a string, skipping: ', customPage);
+        return { isValid: false };
+      }
+      if (!Array.isArray(customPage.paths)) {
+        console.log('Custom manual page config "paths" is not an array, skipping: ', customPage);
+        return { isValid: false };
+      }
+      var invalidLabelCharacters = /[^\w ]+/g;
+      var badCharacters = customPage.label.match(invalidLabelCharacters);
+      if (badCharacters) {
+        console.log('Custom manual page config "label" contains invalid characters "' + badCharacters + '", skipping:', customPage);
+        return { isValid: false };
+      }
+      var type = customPage.label.replace(/ /g, '_').toLowerCase();
+      if (existingTypes.indexOf(type) >= 0) {
+        console.log('Custom manual page config "label" duplicates existing label, skipping: ', customPage);
+        return { isValid: false };
+      }
+      return { isValid: true, type: type };
+    }
+  }, {
+    key: '_addCustomPages',
+    value: function _addCustomPages(manualConfigs, customPageList) {
+      var existingTypes = [];
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
+
+      try {
+        for (var _iterator3 = manualConfigs[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var manualConfig = _step3.value;
+
+          existingTypes.push(manualConfig.type);
+        }
+      } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+            _iterator3.return();
+          }
+        } finally {
+          if (_didIteratorError3) {
+            throw _iteratorError3;
+          }
+        }
+      }
+
+      var _iteratorNormalCompletion4 = true;
+      var _didIteratorError4 = false;
+      var _iteratorError4 = undefined;
+
+      try {
+        for (var _iterator4 = customPageList[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          var customPage = _step4.value;
+
+          var validationInfo = this._validateCustomPageConfig(existingTypes, customPage);
+          if (validationInfo.isValid) {
+            customPage.type = validationInfo.type;
+            existingTypes.push(validationInfo.type);
+            manualConfigs.push(customPage);
+          }
+        }
+      } catch (err) {
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+            _iterator4.return();
+          }
+        } finally {
+          if (_didIteratorError4) {
+            throw _iteratorError4;
+          }
+        }
+      }
     }
 
     /**
@@ -150,14 +261,15 @@ var ManualDocBuilder = function (_DocBuilder) {
     /**
      * build manual.
      * @param {ManualConfigItem} item - target manual config item.
+     * @param {string} filePath - target manual file path.
      * @return {IceCap} built manual.
      * @private
      */
 
   }, {
     key: '_buildManual',
-    value: function _buildManual(item) {
-      var html = this._convertMDToHTML(item);
+    value: function _buildManual(item, filePath) {
+      var html = this._convertMDToHTML(filePath);
       var ice = new _iceCap2.default(this._readTemplate('manual.html'));
       ice.text('title', item.label);
       ice.load('content', html);
@@ -203,35 +315,61 @@ var ManualDocBuilder = function (_DocBuilder) {
         var toc = [];
         if (item.references) {
           var identifiers = _this2._findAllIdentifiersKindGrouping();
-          if (identifiers.class.length) toc.push({ label: 'Class', link: 'identifiers.html#class', indent: 'indent-h1' });
-          if (identifiers.interface.length) toc.push({ label: 'Interface', link: 'identifiers.html#interface', indent: 'indent-h1' });
-          if (identifiers.function.length) toc.push({ label: 'Function', link: 'identifiers.html#function', indent: 'indent-h1' });
-          if (identifiers.variable.length) toc.push({ label: 'Variable', link: 'identifiers.html#variable', indent: 'indent-h1' });
-          if (identifiers.typedef.length) toc.push({ label: 'Typedef', link: 'identifiers.html#typedef', indent: 'indent-h1' });
-          if (identifiers.external.length) toc.push({ label: 'External', link: 'identifiers.html#external', indent: 'indent-h1' });
+          toc.push({ label: 'Reference', link: 'identifiers.html', indent: 'indent-h1' });
+          if (identifiers.class.length) toc.push({ label: 'Class', link: 'identifiers.html#class', indent: 'indent-h2' });
+          if (identifiers.interface.length) toc.push({ label: 'Interface', link: 'identifiers.html#interface', indent: 'indent-h2' });
+          if (identifiers.function.length) toc.push({ label: 'Function', link: 'identifiers.html#function', indent: 'indent-h2' });
+          if (identifiers.variable.length) toc.push({ label: 'Variable', link: 'identifiers.html#variable', indent: 'indent-h2' });
+          if (identifiers.typedef.length) toc.push({ label: 'Typedef', link: 'identifiers.html#typedef', indent: 'indent-h2' });
+          if (identifiers.external.length) toc.push({ label: 'External', link: 'identifiers.html#external', indent: 'indent-h2' });
         } else {
-          var fileName = _this2._getManualOutputFileName(item);
-          var html = _this2._convertMDToHTML(item);
-          var $root = _cheerio2.default.load(html).root();
-          var isHRise = $root.find('h1').length === 0;
-          $root.find('h1,h2,h3,h4,h5').each(function (i, el) {
-            var $el = (0, _cheerio2.default)(el);
-            var label = $el.text();
-            var link = fileName + '#' + $el.attr('id');
-            var indent = void 0;
-            if (isHRise) {
-              var tagName = 'h' + (parseInt(el.tagName.charAt(1), 10) - 1);
-              indent = 'indent-' + tagName;
-            } else {
-              indent = 'indent-' + el.tagName.toLowerCase();
+          var _iteratorNormalCompletion5 = true;
+          var _didIteratorError5 = false;
+          var _iteratorError5 = undefined;
+
+          try {
+            var _loop = function _loop() {
+              var filePath = _step5.value;
+
+              var fileName = _this2._getManualOutputFileName(item, filePath);
+              var html = _this2._convertMDToHTML(filePath);
+              var $root = _cheerio2.default.load(html).root();
+              var h1Count = $root.find('h1').length;
+
+              $root.find('h1,h2,h3,h4,h5').each(function (i, el) {
+                var $el = (0, _cheerio2.default)(el);
+                var label = $el.text();
+                var indent = 'indent-' + el.tagName.toLowerCase();
+
+                var link = fileName + '#' + $el.attr('id');
+                if (el.tagName.toLowerCase() === 'h1' && h1Count === 1) link = fileName;
+
+                toc.push({ label: label, link: link, indent: indent });
+              });
+            };
+
+            for (var _iterator5 = item.paths[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+              _loop();
             }
-            toc.push({ label: label, link: link, indent: indent });
-          });
+          } catch (err) {
+            _didIteratorError5 = true;
+            _iteratorError5 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                _iterator5.return();
+              }
+            } finally {
+              if (_didIteratorError5) {
+                throw _iteratorError5;
+              }
+            }
+          }
         }
 
-        ice.attr('manual', 'data-toc-name', item.label.toLowerCase());
-        ice.text('title', item.label);
-        ice.attr('title', 'href', _this2._getManualOutputFileName(item));
+        ice.attr('manual', 'data-toc-name', item.type);
+        // ice.text('title', item.label);
+        // ice.attr('title', 'href', this._getManualOutputFileName(item));
         ice.loop('manualNav', toc, function (i, item, ice) {
           ice.attr('manualNav', 'class', item.indent);
           ice.text('link', item.label);
@@ -245,56 +383,33 @@ var ManualDocBuilder = function (_DocBuilder) {
     /**
      * get manual file name.
      * @param {ManualConfigItem} item - target manual config item.
+     * @param {string} filePath - target manual markdown file path.
      * @returns {string} file name.
      * @private
      */
 
   }, {
     key: '_getManualOutputFileName',
-    value: function _getManualOutputFileName(item) {
+    value: function _getManualOutputFileName(item, filePath) {
       if (item.fileName) return item.fileName;
-      return 'manual/' + item.label.toLowerCase() + '.html';
+
+      var fileName = _path2.default.parse(filePath).name;
+      return 'manual/' + item.type + '/' + fileName + '.html';
     }
 
     /**
      * convert markdown to html.
      * if markdown has only one ``h1`` and it's text is ``item.label``, remove the ``h1``.
      * because duplication ``h1`` in output html.
-     * @param {ManualConfigItem} item - target.
+     * @param {string} filePath - target.
      * @returns {string} converted html.
      * @private
      */
 
   }, {
     key: '_convertMDToHTML',
-    value: function _convertMDToHTML(item) {
-      var contents = [];
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
-
-      try {
-        for (var _iterator2 = item.paths[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var path = _step2.value;
-
-          contents.push(_fsExtra2.default.readFileSync(path).toString());
-        }
-      } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
-          }
-        } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
-          }
-        }
-      }
-
-      var content = contents.join('\n\n');
+    value: function _convertMDToHTML(filePath) {
+      var content = _fsExtra2.default.readFileSync(filePath).toString();
       var html = (0, _util.markdown)(content);
       var $root = _cheerio2.default.load(html).root();
       return $root.html();
