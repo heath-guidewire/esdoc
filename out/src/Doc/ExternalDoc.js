@@ -31,14 +31,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Doc Class from virtual comment node of external.
  */
-
 var ExternalDoc = function (_AbstractDoc) {
   _inherits(ExternalDoc, _AbstractDoc);
 
   function ExternalDoc() {
     _classCallCheck(this, ExternalDoc);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(ExternalDoc).apply(this, arguments));
+    return _possibleConstructorReturn(this, (ExternalDoc.__proto__ || Object.getPrototypeOf(ExternalDoc)).apply(this, arguments));
   }
 
   _createClass(ExternalDoc, [{
@@ -49,7 +48,7 @@ var ExternalDoc = function (_AbstractDoc) {
      * @private
      */
     value: function _apply() {
-      _get(Object.getPrototypeOf(ExternalDoc.prototype), '_apply', this).call(this);
+      _get(ExternalDoc.prototype.__proto__ || Object.getPrototypeOf(ExternalDoc.prototype), '_apply', this).call(this);
 
       delete this._value.export;
       delete this._value.importPath;
@@ -61,7 +60,7 @@ var ExternalDoc = function (_AbstractDoc) {
   }, {
     key: '@_kind',
     value: function _kind() {
-      _get(Object.getPrototypeOf(ExternalDoc.prototype), '@_kind', this).call(this);
+      _get(ExternalDoc.prototype.__proto__ || Object.getPrototypeOf(ExternalDoc.prototype), '@_kind', this).call(this);
       if (this._value.kind) return;
       this._value.kind = 'external';
     }
@@ -92,16 +91,15 @@ var ExternalDoc = function (_AbstractDoc) {
       try {
         for (var _iterator = tags[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var tag = _step.value;
-          var tagName = tag.tagName;
-          var tagValue = tag.tagValue;
+          var tagName = tag.tagName,
+              tagValue = tag.tagValue;
 
           if (tagName === '@_name') {
             name = tagValue;
           } else if (tagName === '@external') {
-            var _ParamParser$parsePar = _ParamParser2.default.parseParamValue(tagValue, true, false, true);
-
-            var typeText = _ParamParser$parsePar.typeText;
-            var paramDesc = _ParamParser$parsePar.paramDesc;
+            var _ParamParser$parsePar = _ParamParser2.default.parseParamValue(tagValue, true, false, true),
+                typeText = _ParamParser$parsePar.typeText,
+                paramDesc = _ParamParser$parsePar.paramDesc;
 
             name = typeText;
             this._value.externalLink = paramDesc;
@@ -130,7 +128,7 @@ var ExternalDoc = function (_AbstractDoc) {
   }, {
     key: '@_memberof',
     value: function _memberof() {
-      _get(Object.getPrototypeOf(ExternalDoc.prototype), '@_memberof', this).call(this);
+      _get(ExternalDoc.prototype.__proto__ || Object.getPrototypeOf(ExternalDoc.prototype), '@_memberof', this).call(this);
       if (this._value.memberof) return;
       this._value.memberof = this._pathResolver.filePath;
     }
@@ -140,7 +138,7 @@ var ExternalDoc = function (_AbstractDoc) {
   }, {
     key: '@_longname',
     value: function _longname() {
-      _get(Object.getPrototypeOf(ExternalDoc.prototype), '@_longname', this).call(this);
+      _get(ExternalDoc.prototype.__proto__ || Object.getPrototypeOf(ExternalDoc.prototype), '@_longname', this).call(this);
       if (this._value.longname) return;
       this._value.longname = this._value.name;
     }

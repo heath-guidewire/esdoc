@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -27,7 +27,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 /**
  * Param Type Parser class.
  */
-
 var ParamParser = function () {
   function ParamParser() {
     _classCallCheck(this, ParamParser);
@@ -77,9 +76,9 @@ var ParamParser = function () {
   }, {
     key: 'parseParamValue',
     value: function parseParamValue(value) {
-      var type = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
-      var name = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
-      var desc = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
+      var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+      var name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+      var desc = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
 
       value = value.trim();
 
@@ -138,9 +137,9 @@ var ParamParser = function () {
   }, {
     key: 'parseParam',
     value: function parseParam() {
-      var typeText = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
-      var paramName = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-      var paramDesc = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+      var typeText = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var paramName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var paramDesc = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
       var result = {};
 

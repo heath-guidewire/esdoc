@@ -41,14 +41,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 /**
  * Builder base class.
  */
-
 var DocBuilder = function () {
   /**
    * create instance.
    * @param {Taffy} data - doc object database.
    * @param {ESDocConfig} config - esdoc config is used build output.
    */
-
   function DocBuilder(data, config) {
     _classCallCheck(this, DocBuilder);
 
@@ -123,7 +121,7 @@ var DocBuilder = function () {
   }, {
     key: '_findByName',
     value: function _findByName(name) {
-      var kind = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+      var kind = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
       var docs = void 0;
 
@@ -411,7 +409,7 @@ var DocBuilder = function () {
   }, {
     key: '_findAccessDocs',
     value: function _findAccessDocs(doc, kind) {
-      var isStatic = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+      var isStatic = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
       var cond = { kind: kind, static: isStatic };
 
@@ -457,7 +455,7 @@ var DocBuilder = function () {
   }, {
     key: '_buildSummaryHTML',
     value: function _buildSummaryHTML(doc, kind, title) {
-      var isStatic = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
+      var isStatic = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
 
       var accessDocs = this._findAccessDocs(doc, kind, isStatic);
       var html = '';
@@ -559,7 +557,7 @@ var DocBuilder = function () {
   }, {
     key: '_buildDetailHTML',
     value: function _buildDetailHTML(doc, kind, title) {
-      var isStatic = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
+      var isStatic = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
 
       var accessDocs = this._findAccessDocs(doc, kind, isStatic);
       var html = '';
@@ -767,7 +765,7 @@ var DocBuilder = function () {
   }, {
     key: '_getTitle',
     value: function _getTitle() {
-      var doc = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
+      var doc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
       var name = doc.name || doc.toString();
 
@@ -878,7 +876,7 @@ var DocBuilder = function () {
   }, {
     key: '_buildFileDocLinkHTML',
     value: function _buildFileDocLinkHTML(doc) {
-      var text = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+      var text = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
       if (!doc) return '';
 
@@ -1057,9 +1055,9 @@ var DocBuilder = function () {
   }, {
     key: '_buildDocLinkHTML',
     value: function _buildDocLinkHTML(longname) {
-      var text = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-      var inner = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-      var kind = arguments.length <= 3 || arguments[3] === undefined ? null : arguments[3];
+      var text = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var inner = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+      var kind = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 
       if (!longname) return '';
 
@@ -1103,9 +1101,9 @@ var DocBuilder = function () {
   }, {
     key: '_buildDocsLinkHTML',
     value: function _buildDocsLinkHTML(longnames) {
-      var text = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-      var inner = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-      var separator = arguments.length <= 3 || arguments[3] === undefined ? '\n' : arguments[3];
+      var text = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var inner = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+      var separator = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '\n';
 
       if (!longnames) return '';
       if (!longnames.length) return '';
@@ -1299,8 +1297,8 @@ var DocBuilder = function () {
     value: function _buildProperties() {
       var _this5 = this;
 
-      var properties = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-      var title = arguments.length <= 1 || arguments[1] === undefined ? 'Properties:' : arguments[1];
+      var properties = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+      var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Properties:';
 
       var ice = new _iceCap2.default(this._readTemplate('properties.html'));
 

@@ -18,12 +18,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 /**
  * Plugin system for your plugin.
  */
-
 var Plugin = function () {
   /**
    * create instance.
    */
-
   function Plugin() {
     _classCallCheck(this, Plugin);
 
@@ -39,7 +37,7 @@ var Plugin = function () {
   _createClass(Plugin, [{
     key: 'init',
     value: function init() {
-      var plugins = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+      var plugins = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
       this._plugins = copy(plugins);
     }
@@ -55,7 +53,7 @@ var Plugin = function () {
   }, {
     key: '_execHandler',
     value: function _execHandler(handlerName, ev) {
-      var giveOption = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+      var giveOption = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -226,7 +224,7 @@ var PluginEvent =
  * @param {Object} data - event content.
  */
 exports.PluginEvent = function PluginEvent() {
-  var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
   _classCallCheck(this, PluginEvent);
 

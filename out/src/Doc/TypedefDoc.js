@@ -31,14 +31,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Doc class for virtual comment node of typedef.
  */
-
 var TypedefDoc = function (_AbstractDoc) {
   _inherits(TypedefDoc, _AbstractDoc);
 
   function TypedefDoc() {
     _classCallCheck(this, TypedefDoc);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(TypedefDoc).apply(this, arguments));
+    return _possibleConstructorReturn(this, (TypedefDoc.__proto__ || Object.getPrototypeOf(TypedefDoc)).apply(this, arguments));
   }
 
   _createClass(TypedefDoc, [{
@@ -49,7 +48,7 @@ var TypedefDoc = function (_AbstractDoc) {
      * @private
      */
     value: function _apply() {
-      _get(Object.getPrototypeOf(TypedefDoc.prototype), '_apply', this).call(this);
+      _get(TypedefDoc.prototype.__proto__ || Object.getPrototypeOf(TypedefDoc.prototype), '_apply', this).call(this);
 
       this['@typedef']();
 
@@ -63,7 +62,7 @@ var TypedefDoc = function (_AbstractDoc) {
   }, {
     key: '@_kind',
     value: function _kind() {
-      _get(Object.getPrototypeOf(TypedefDoc.prototype), '@_kind', this).call(this);
+      _get(TypedefDoc.prototype.__proto__ || Object.getPrototypeOf(TypedefDoc.prototype), '@_kind', this).call(this);
       if (this._value.kind) return;
       this._value.kind = 'typedef';
     }
@@ -87,17 +86,16 @@ var TypedefDoc = function (_AbstractDoc) {
       try {
         for (var _iterator = tags[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var tag = _step.value;
-          var tagName = tag.tagName;
-          var tagValue = tag.tagValue;
+          var tagName = tag.tagName,
+              tagValue = tag.tagValue;
 
           if (tagName === '@_name') {
             name = tagValue;
           } else if (tagName === '@typedef') {
-            var _ParamParser$parsePar = _ParamParser2.default.parseParamValue(tagValue, true, true, false);
-
-            var typeText = _ParamParser$parsePar.typeText;
-            var paramName = _ParamParser$parsePar.paramName;
-            var paramDesc = _ParamParser$parsePar.paramDesc;
+            var _ParamParser$parsePar = _ParamParser2.default.parseParamValue(tagValue, true, true, false),
+                typeText = _ParamParser$parsePar.typeText,
+                paramName = _ParamParser$parsePar.paramName,
+                paramDesc = _ParamParser$parsePar.paramDesc;
 
             name = paramName;
           }
@@ -125,7 +123,7 @@ var TypedefDoc = function (_AbstractDoc) {
   }, {
     key: '@_memberof',
     value: function _memberof() {
-      _get(Object.getPrototypeOf(TypedefDoc.prototype), '@_memberof', this).call(this);
+      _get(TypedefDoc.prototype.__proto__ || Object.getPrototypeOf(TypedefDoc.prototype), '@_memberof', this).call(this);
       if (this._value.memberof) return;
 
       var memberof = void 0;
@@ -150,11 +148,10 @@ var TypedefDoc = function (_AbstractDoc) {
       var value = this._findTagValue(['@typedef']);
       if (!value) return;
 
-      var _ParamParser$parsePar2 = _ParamParser2.default.parseParamValue(value, true, true, false);
-
-      var typeText = _ParamParser$parsePar2.typeText;
-      var paramName = _ParamParser$parsePar2.paramName;
-      var paramDesc = _ParamParser$parsePar2.paramDesc;
+      var _ParamParser$parsePar2 = _ParamParser2.default.parseParamValue(value, true, true, false),
+          typeText = _ParamParser$parsePar2.typeText,
+          paramName = _ParamParser$parsePar2.paramName,
+          paramDesc = _ParamParser$parsePar2.paramDesc;
 
       var result = _ParamParser2.default.parseParam(typeText, paramName, paramDesc);
 
