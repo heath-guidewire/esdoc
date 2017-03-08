@@ -28,7 +28,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @todo shorten before process markdown.
  */
 function shorten(doc) {
-  var asMarkdown = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+  var asMarkdown = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
   if (!doc) return '';
 
@@ -76,7 +76,7 @@ function shorten(doc) {
  * @return {string} html.
  */
 function markdown(text) {
-  var breaks = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+  var breaks = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
   var availableTags = ['span', 'a', 'p', 'div', 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'br', 'hr', 'li', 'ul', 'ol', 'code', 'pre'];
   var availableAttributes = ['src', 'href', 'title', 'class', 'id', 'name', 'width', 'height'];

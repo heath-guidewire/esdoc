@@ -31,14 +31,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Doc Class from Member Expression AST node.
  */
-
 var MemberDoc = function (_AbstractDoc) {
   _inherits(MemberDoc, _AbstractDoc);
 
   function MemberDoc() {
     _classCallCheck(this, MemberDoc);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(MemberDoc).apply(this, arguments));
+    return _possibleConstructorReturn(this, (MemberDoc.__proto__ || Object.getPrototypeOf(MemberDoc)).apply(this, arguments));
   }
 
   _createClass(MemberDoc, [{
@@ -49,7 +48,7 @@ var MemberDoc = function (_AbstractDoc) {
      * @private
      */
     value: function _apply() {
-      _get(Object.getPrototypeOf(MemberDoc.prototype), '_apply', this).call(this);
+      _get(MemberDoc.prototype.__proto__ || Object.getPrototypeOf(MemberDoc.prototype), '_apply', this).call(this);
 
       delete this._value.export;
       delete this._value.importPath;
@@ -61,7 +60,7 @@ var MemberDoc = function (_AbstractDoc) {
   }, {
     key: '@_kind',
     value: function _kind() {
-      _get(Object.getPrototypeOf(MemberDoc.prototype), '@_kind', this).call(this);
+      _get(MemberDoc.prototype.__proto__ || Object.getPrototypeOf(MemberDoc.prototype), '@_kind', this).call(this);
       if (this._value.kind) return;
       this._value.kind = 'member';
     }
@@ -103,15 +102,14 @@ var MemberDoc = function (_AbstractDoc) {
         try {
           for (var _iterator = tags[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var tag = _step.value;
-            var tagName = tag.tagName;
-            var tagValue = tag.tagValue;
+            var tagName = tag.tagName,
+                tagValue = tag.tagValue;
 
             if (tagName === '@_name') {
               name = tagValue;
             } else if (tagName === '@_member') {
-              var _ParamParser$parsePar = _ParamParser2.default.parseParamValue(tagValue, true, true, false);
-
-              var paramName = _ParamParser$parsePar.paramName;
+              var _ParamParser$parsePar = _ParamParser2.default.parseParamValue(tagValue, true, true, false),
+                  paramName = _ParamParser$parsePar.paramName;
 
               name = paramName;
             }
@@ -151,7 +149,7 @@ var MemberDoc = function (_AbstractDoc) {
   }, {
     key: '@type',
     value: function type() {
-      _get(Object.getPrototypeOf(MemberDoc.prototype), '@type', this).call(this);
+      _get(MemberDoc.prototype.__proto__ || Object.getPrototypeOf(MemberDoc.prototype), '@type', this).call(this);
       if (this._value.type) return;
 
       this._value.type = _ParamParser2.default.guessType(this._node.right);

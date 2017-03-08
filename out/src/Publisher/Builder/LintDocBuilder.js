@@ -48,7 +48,7 @@ var LintDocBuilder = function (_DocBuilder) {
   function LintDocBuilder() {
     _classCallCheck(this, LintDocBuilder);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(LintDocBuilder).apply(this, arguments));
+    return _possibleConstructorReturn(this, (LintDocBuilder.__proto__ || Object.getPrototypeOf(LintDocBuilder)).apply(this, arguments));
   }
 
   _createClass(LintDocBuilder, [{
@@ -195,8 +195,8 @@ var LintDocBuilder = function (_DocBuilder) {
         if (codeParams[i] === '*') {
           // nothing
         } else if (codeParams[i] !== docParams[i]) {
-            return false;
-          }
+          return false;
+        }
       }
 
       return true;
@@ -239,7 +239,7 @@ var LintDocBuilder = function (_DocBuilder) {
             targetLines.push(i + '| ' + lines[i]);
           }
 
-          console.log('\u001b[33mwarning: signature mismatch: ' + name + ' ' + filePath + '#' + startLineNumber + '\u001b[32m');
+          console.log('\x1B[33mwarning: signature mismatch: ' + name + ' ' + filePath + '#' + startLineNumber + '\x1B[32m');
           console.log(targetLines.join('\n'));
           console.log('[0m');
         }

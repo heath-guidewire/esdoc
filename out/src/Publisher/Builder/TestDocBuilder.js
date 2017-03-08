@@ -25,14 +25,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Test file output html builder class.
  */
-
 var TestDocBuilder = function (_DocBuilder) {
   _inherits(TestDocBuilder, _DocBuilder);
 
   function TestDocBuilder() {
     _classCallCheck(this, TestDocBuilder);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(TestDocBuilder).apply(this, arguments));
+    return _possibleConstructorReturn(this, (TestDocBuilder.__proto__ || Object.getPrototypeOf(TestDocBuilder)).apply(this, arguments));
   }
 
   _createClass(TestDocBuilder, [{
@@ -85,8 +84,8 @@ var TestDocBuilder = function (_DocBuilder) {
     value: function _buildTestDescribeDocHTML() {
       var _this2 = this;
 
-      var depth = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
-      var memberof = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+      var depth = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      var memberof = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
       var cond = { kind: 'testDescribe', testDepth: depth };
       if (memberof) cond.memberof = memberof;

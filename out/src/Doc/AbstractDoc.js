@@ -42,7 +42,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Abstract Doc Class.
  * @todo rename this class name.
  */
-
 var AbstractDoc = function () {
   /**
    * create instance.
@@ -51,9 +50,8 @@ var AbstractDoc = function () {
    * @param {PathResolver} pathResolver - this is file path resolver that contains this doc.
    * @param {Tag[]} commentTags - this is tags that self node has.
    */
-
   function AbstractDoc(ast, node, pathResolver) {
-    var commentTags = arguments.length <= 3 || arguments[3] === undefined ? [] : arguments[3];
+    var commentTags = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
 
     _classCallCheck(this, AbstractDoc);
 
@@ -591,11 +589,10 @@ var AbstractDoc = function () {
         for (var _iterator5 = values[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
           var value = _step5.value;
 
-          var _ParamParser$parsePar = _ParamParser2.default.parseParamValue(value);
-
-          var typeText = _ParamParser$parsePar.typeText;
-          var paramName = _ParamParser$parsePar.paramName;
-          var paramDesc = _ParamParser$parsePar.paramDesc;
+          var _ParamParser$parsePar = _ParamParser2.default.parseParamValue(value),
+              typeText = _ParamParser$parsePar.typeText,
+              paramName = _ParamParser$parsePar.paramName,
+              paramDesc = _ParamParser$parsePar.paramDesc;
 
           if (!typeText || !paramName) {
             _InvalidCodeLogger2.default.show(this._pathResolver.fileFullPath, this._node);
@@ -628,11 +625,10 @@ var AbstractDoc = function () {
       var value = this._findTagValue(['@return', '@returns']);
       if (!value) return;
 
-      var _ParamParser$parsePar2 = _ParamParser2.default.parseParamValue(value, true, false, true);
-
-      var typeText = _ParamParser$parsePar2.typeText;
-      var paramName = _ParamParser$parsePar2.paramName;
-      var paramDesc = _ParamParser$parsePar2.paramDesc;
+      var _ParamParser$parsePar2 = _ParamParser2.default.parseParamValue(value, true, false, true),
+          typeText = _ParamParser$parsePar2.typeText,
+          paramName = _ParamParser$parsePar2.paramName,
+          paramDesc = _ParamParser$parsePar2.paramDesc;
 
       var result = _ParamParser2.default.parseParam(typeText, paramName, paramDesc);
       this._value.return = result;
@@ -655,11 +651,10 @@ var AbstractDoc = function () {
         for (var _iterator6 = values[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
           var value = _step6.value;
 
-          var _ParamParser$parsePar3 = _ParamParser2.default.parseParamValue(value);
-
-          var typeText = _ParamParser$parsePar3.typeText;
-          var paramName = _ParamParser$parsePar3.paramName;
-          var paramDesc = _ParamParser$parsePar3.paramDesc;
+          var _ParamParser$parsePar3 = _ParamParser2.default.parseParamValue(value),
+              typeText = _ParamParser$parsePar3.typeText,
+              paramName = _ParamParser$parsePar3.paramName,
+              paramDesc = _ParamParser$parsePar3.paramDesc;
 
           var result = _ParamParser2.default.parseParam(typeText, paramName, paramDesc);
           this._value.properties.push(result);
@@ -688,11 +683,10 @@ var AbstractDoc = function () {
       var value = this._findTagValue(['@type']);
       if (!value) return;
 
-      var _ParamParser$parsePar4 = _ParamParser2.default.parseParamValue(value, true, false, false);
-
-      var typeText = _ParamParser$parsePar4.typeText;
-      var paramName = _ParamParser$parsePar4.paramName;
-      var paramDesc = _ParamParser$parsePar4.paramDesc;
+      var _ParamParser$parsePar4 = _ParamParser2.default.parseParamValue(value, true, false, false),
+          typeText = _ParamParser$parsePar4.typeText,
+          paramName = _ParamParser$parsePar4.paramName,
+          paramDesc = _ParamParser$parsePar4.paramDesc;
 
       var result = _ParamParser2.default.parseParam(typeText, paramName, paramDesc);
       this._value.type = result;
@@ -737,11 +731,10 @@ var AbstractDoc = function () {
         for (var _iterator7 = values[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
           var value = _step7.value;
 
-          var _ParamParser$parsePar5 = _ParamParser2.default.parseParamValue(value, true, false, true);
-
-          var typeText = _ParamParser$parsePar5.typeText;
-          var paramName = _ParamParser$parsePar5.paramName;
-          var paramDesc = _ParamParser$parsePar5.paramDesc;
+          var _ParamParser$parsePar5 = _ParamParser2.default.parseParamValue(value, true, false, true),
+              typeText = _ParamParser$parsePar5.typeText,
+              paramName = _ParamParser$parsePar5.paramName,
+              paramDesc = _ParamParser$parsePar5.paramDesc;
 
           var result = _ParamParser2.default.parseParam(typeText, paramName, paramDesc);
           this._value.throws.push({
@@ -782,11 +775,10 @@ var AbstractDoc = function () {
         for (var _iterator8 = values[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
           var value = _step8.value;
 
-          var _ParamParser$parsePar6 = _ParamParser2.default.parseParamValue(value, true, false, true);
-
-          var typeText = _ParamParser$parsePar6.typeText;
-          var paramName = _ParamParser$parsePar6.paramName;
-          var paramDesc = _ParamParser$parsePar6.paramDesc;
+          var _ParamParser$parsePar6 = _ParamParser2.default.parseParamValue(value, true, false, true),
+              typeText = _ParamParser$parsePar6.typeText,
+              paramName = _ParamParser$parsePar6.paramName,
+              paramDesc = _ParamParser$parsePar6.paramDesc;
 
           var result = _ParamParser2.default.parseParam(typeText, paramName, paramDesc);
           this._value.emits.push({
@@ -827,11 +819,10 @@ var AbstractDoc = function () {
         for (var _iterator9 = values[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
           var value = _step9.value;
 
-          var _ParamParser$parsePar7 = _ParamParser2.default.parseParamValue(value, true, false, true);
-
-          var typeText = _ParamParser$parsePar7.typeText;
-          var paramName = _ParamParser$parsePar7.paramName;
-          var paramDesc = _ParamParser$parsePar7.paramDesc;
+          var _ParamParser$parsePar7 = _ParamParser2.default.parseParamValue(value, true, false, true),
+              typeText = _ParamParser$parsePar7.typeText,
+              paramName = _ParamParser$parsePar7.paramName,
+              paramDesc = _ParamParser$parsePar7.paramDesc;
 
           var result = _ParamParser2.default.parseParam(typeText, paramName, paramDesc);
           this._value.listens.push({
@@ -863,11 +854,10 @@ var AbstractDoc = function () {
       var value = this._findTagValue(['@_member']);
       if (!value) return;
 
-      var _ParamParser$parsePar8 = _ParamParser2.default.parseParamValue(value, true, true, false);
-
-      var typeText = _ParamParser$parsePar8.typeText;
-      var paramName = _ParamParser$parsePar8.paramName;
-      var paramDesc = _ParamParser$parsePar8.paramDesc;
+      var _ParamParser$parsePar8 = _ParamParser2.default.parseParamValue(value, true, true, false),
+          typeText = _ParamParser$parsePar8.typeText,
+          paramName = _ParamParser$parsePar8.paramName,
+          paramDesc = _ParamParser$parsePar8.paramDesc;
 
       var result = _ParamParser2.default.parseParam(typeText, paramName, paramDesc);
       this._value.type = result;

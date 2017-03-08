@@ -30,7 +30,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * pathResolver.filePath; // 'src/foo/bar.js'
  * pathResolver.resolve('./baz.js'); // 'src/foo/baz.js'
  */
-
 var PathResolver = function () {
   /**
    * create instance.
@@ -39,10 +38,9 @@ var PathResolver = function () {
    * @param {string} [packageName] - npm package name.
    * @param {string} [mainFilePath] - npm main file path.
    */
-
   function PathResolver(inDirPath, filePath) {
-    var packageName = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
-    var mainFilePath = arguments.length <= 3 || arguments[3] === undefined ? null : arguments[3];
+    var packageName = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    var mainFilePath = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 
     _classCallCheck(this, PathResolver);
 

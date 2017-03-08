@@ -35,14 +35,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Manual Output Builder class.
  */
-
 var ManualDocBuilder = function (_DocBuilder) {
   _inherits(ManualDocBuilder, _DocBuilder);
 
   function ManualDocBuilder() {
     _classCallCheck(this, ManualDocBuilder);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(ManualDocBuilder).apply(this, arguments));
+    return _possibleConstructorReturn(this, (ManualDocBuilder.__proto__ || Object.getPrototypeOf(ManualDocBuilder)).apply(this, arguments));
   }
 
   _createClass(ManualDocBuilder, [{
@@ -211,25 +210,23 @@ var ManualDocBuilder = function (_DocBuilder) {
           if (identifiers.typedef.length) toc.push({ label: 'Typedef', link: 'identifiers.html#typedef', indent: 'indent-h1' });
           if (identifiers.external.length) toc.push({ label: 'External', link: 'identifiers.html#external', indent: 'indent-h1' });
         } else {
-          (function () {
-            var fileName = _this2._getManualOutputFileName(item);
-            var html = _this2._convertMDToHTML(item);
-            var $root = _cheerio2.default.load(html).root();
-            var isHRise = $root.find('h1').length === 0;
-            $root.find('h1,h2,h3,h4,h5').each(function (i, el) {
-              var $el = (0, _cheerio2.default)(el);
-              var label = $el.text();
-              var link = fileName + '#' + $el.attr('id');
-              var indent = void 0;
-              if (isHRise) {
-                var tagName = 'h' + (parseInt(el.tagName.charAt(1), 10) - 1);
-                indent = 'indent-' + tagName;
-              } else {
-                indent = 'indent-' + el.tagName.toLowerCase();
-              }
-              toc.push({ label: label, link: link, indent: indent });
-            });
-          })();
+          var fileName = _this2._getManualOutputFileName(item);
+          var html = _this2._convertMDToHTML(item);
+          var $root = _cheerio2.default.load(html).root();
+          var isHRise = $root.find('h1').length === 0;
+          $root.find('h1,h2,h3,h4,h5').each(function (i, el) {
+            var $el = (0, _cheerio2.default)(el);
+            var label = $el.text();
+            var link = fileName + '#' + $el.attr('id');
+            var indent = void 0;
+            if (isHRise) {
+              var tagName = 'h' + (parseInt(el.tagName.charAt(1), 10) - 1);
+              indent = 'indent-' + tagName;
+            } else {
+              indent = 'indent-' + el.tagName.toLowerCase();
+            }
+            toc.push({ label: label, link: link, indent: indent });
+          });
         }
 
         ice.attr('manual', 'data-toc-name', item.label.toLowerCase());
