@@ -272,6 +272,7 @@ var ManualDocBuilder = function (_DocBuilder) {
       var html = this._convertMDToHTML(filePath);
       var ice = new _iceCap2.default(this._readTemplate('manual.html'));
       ice.text('title', item.label);
+      ice.text('manualPath', filePath);
       ice.load('content', html);
 
       // convert relative src to base url relative src.

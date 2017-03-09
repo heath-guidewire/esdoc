@@ -134,6 +134,7 @@ export default class ManualDocBuilder extends DocBuilder {
     const html = this._convertMDToHTML(filePath);
     const ice = new IceCap(this._readTemplate('manual.html'));
     ice.text('title', item.label);
+    ice.text('manualPath', filePath);
     ice.load('content', html);
 
     // convert relative src to base url relative src.

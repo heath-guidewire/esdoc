@@ -141,6 +141,7 @@ describe('Manual:', ()=>{
   /** @test {ManualDocBuilder#_buldManual} */
   it('has overview', ()=>{
     const doc = readDoc('manual/overview/overview.html');
+    assert.includes(doc, '[data-ice="manualPath"]', './test/fixture/manual/overview.md');
     assert.includes(doc, '.github-markdown h1', 'Overview');
     assert.includes(doc, '.github-markdown [data-ice="content"]', 'ESDoc is a documentation generator for JavaScript(ES6).');
   });
@@ -148,6 +149,7 @@ describe('Manual:', ()=>{
   /** @test {ManualDocBuilder#_buldManual} */
   it('has installation', ()=>{
     const doc = readDoc('manual/installation/installation.html');
+    assert.includes(doc, '[data-ice="manualPath"]', './test/fixture/manual/installation.md');
     assert.includes(doc, '.github-markdown h1', 'Installation');
     assert.includes(doc, '.github-markdown [data-ice="content"]', 'npm install -g esdoc');
   });
@@ -155,13 +157,18 @@ describe('Manual:', ()=>{
   /** @test {ManualDocBuilder#_buldManual} */
   it('has usage', ()=>{
     const doc = readDoc('manual/usage/usage1.html');
+    assert.includes(doc, '[data-ice="manualPath"]', './test/fixture/manual/usage1.md');
     assert.includes(doc, '.github-markdown h1:nth-of-type(1)', 'Usage');
     assert.includes(doc, '.github-markdown [data-ice="content"]', 'esdoc -c esdoc.json');
+    const doc2 = readDoc('manual/usage/usage2.html');
+    assert.includes(doc2, '[data-ice="manualPath"]', './test/fixture/manual/usage2.md');
+    assert.includes(doc2, '.github-markdown h1:nth-of-type(1)', 'Usage2');
   });
 
   /** @test {ManualDocBuilder#_buldManual} */
   it('has tutorial', ()=>{
     const doc = readDoc('manual/tutorial/tutorial.html');
+    assert.includes(doc, '[data-ice="manualPath"]', './test/fixture/manual/tutorial.md');
     assert.includes(doc, '.github-markdown h1', 'Tutorial');
     assert.includes(doc, '.github-markdown [data-ice="content"]', 'this is tutorial');
   });
@@ -169,6 +176,7 @@ describe('Manual:', ()=>{
   /** @test {ManualDocBuilder#_buldManual} */
   it('has configuration', ()=>{
     const doc = readDoc('manual/configuration/configuration.html');
+    assert.includes(doc, '[data-ice="manualPath"]', './test/fixture/manual/configuration.md');
     assert.includes(doc, '.github-markdown h1', 'Configuration');
     assert.includes(doc, '.github-markdown [data-ice="content"]', 'this is configuration');
   });
@@ -176,6 +184,7 @@ describe('Manual:', ()=>{
   /** @test {ManualDocBuilder#_buldManual} */
   it('has example', ()=>{
     const doc = readDoc('manual/example/example.html');
+    assert.includes(doc, '[data-ice="manualPath"]', './test/fixture/manual/example.md');
     assert.includes(doc, '.github-markdown h1', 'Example');
     assert.includes(doc, '.github-markdown [data-ice="content"] h2:nth-of-type(1)', 'Minimum Config');
   });
@@ -183,6 +192,7 @@ describe('Manual:', ()=>{
   /** @test {ManualDocBuilder#_buldManual} */
   it('has faq', ()=>{
     const doc = readDoc('manual/faq/faq.html');
+    assert.includes(doc, '[data-ice="manualPath"]', './test/fixture/manual/faq.md');
     assert.includes(doc, '.github-markdown h1', 'FAQ');
     assert.includes(doc, '.github-markdown [data-ice="content"]', 'ESDoc has two goals.');
   });
@@ -190,6 +200,7 @@ describe('Manual:', ()=>{
   /** @test {ManualDocBuilder#_buldManual} */
   it('has changelog', ()=>{
     const doc = readDoc('manual/changelog/CHANGELOG.html');
+    assert.includes(doc, '[data-ice="manualPath"]', './test/fixture/CHANGELOG.md');
     assert.includes(doc, '.github-markdown h1', 'Changelog');
     assert.includes(doc, '.github-markdown [data-ice="content"] h2:nth-of-type(1)', '0.0.1');
   });
@@ -197,6 +208,7 @@ describe('Manual:', ()=>{
   /** @test {ManualDocBuilder#_buldManual} */
   it('has custom page 1', ()=>{
     const doc = readDoc('manual/custom_page_1/customPage1.html');
+    assert.includes(doc, '[data-ice="manualPath"]', './test/fixture/manual/customPage1.md');
     assert.includes(doc, '.github-markdown h1', 'Custom Page 1');
     assert.includes(doc, '.github-markdown [data-ice="content"]', 'Foo 1');
   });
@@ -204,6 +216,7 @@ describe('Manual:', ()=>{
   /** @test {ManualDocBuilder#_buldManual} */
   it('has custom page 2', ()=>{
     const doc = readDoc('manual/custom_page_2/customPage2.html');
+    assert.includes(doc, '[data-ice="manualPath"]', './test/fixture/manual/customPage2.md');
     assert.includes(doc, '.github-markdown h1', 'Custom Page 2');
     assert.includes(doc, '.github-markdown [data-ice="content"]', 'Foo 2');
   });
