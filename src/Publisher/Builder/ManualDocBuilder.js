@@ -26,11 +26,19 @@ export default class ManualDocBuilder extends DocBuilder {
       const fileName = 'manual/index.html';
       const baseUrl = this._getBaseUrl(fileName);
       this._buildManualIndex(manualConfig);
-      ice.load('content', this._buildManualIndex(manualConfig), IceCap.MODE_WRITE);
+      ice.load('content', this._buildManualCardIndex(manualConfig), IceCap.MODE_WRITE);
       ice.load('nav', this._buildManualNav(manualConfig), IceCap.MODE_WRITE);
       ice.text('title', 'Manual', IceCap.MODE_WRITE);
       ice.attr('baseUrl', 'href', baseUrl, IceCap.MODE_WRITE);
+      ice.attr('rootContainer', 'class', ' manual-index');
       callback(ice.html, fileName);
+
+      if (this._config.manual.globalIndex) {
+        ice.attr('baseUrl', 'href', './', IceCap.MODE_WRITE);
+        callback(ice.html, 'index.html');
+      }
+
+      ice.attr('rootContainer', 'class', ' manual-index', IceCap.MODE_REMOVE);
     }
 
     for (const item of manualConfig) {
@@ -60,10 +68,12 @@ export default class ManualDocBuilder extends DocBuilder {
     const m = this._config.manual;
     const manualConfig = [];
     if (m.overview) manualConfig.push({label: 'Overview', paths: m.overview, type: 'overview' });
+    if (m.design) manualConfig.push({label: 'Design', paths: m.design, type: 'design'});
     if (m.installation) manualConfig.push({label: 'Installation', paths: m.installation, type: 'installation'});
     if (m.tutorial) manualConfig.push({label: 'Tutorial', paths: m.tutorial, type: 'tutorial'});
     if (m.usage) manualConfig.push({label: 'Usage', paths: m.usage, type: 'usage'});
     if (m.configuration) manualConfig.push({label: 'Configuration', paths: m.configuration, type: 'configuration'});
+    if (m.advanced) manualConfig.push({label: 'Advanced', paths: m.advanced, type: 'advanced'});
     if (m.example) manualConfig.push({label: 'Example', paths: m.example, type: 'example'});
     manualConfig.push({label: 'Reference', fileName: 'identifiers.html', references: true, type: 'reference'});
     if (m.faq) manualConfig.push({label: 'FAQ', paths: m.faq, type: 'faq'});
@@ -104,6 +114,7 @@ export default class ManualDocBuilder extends DocBuilder {
       const validationInfo = this._validateCustomPageConfig(existingTypes, customPage);
       if (validationInfo.isValid) {
         customPage.type = validationInfo.type;
+        customPage.isCustom = true;
         existingTypes.push(validationInfo.type);
         manualConfigs.push(customPage);
       }
@@ -161,6 +172,83 @@ export default class ManualDocBuilder extends DocBuilder {
   }
 
   /**
+   * built manual card style index.
+   * @param {ManualConfigItem[]} manualConfig - target manual config.
+   * @return {IceCap} built index.
+   * @private
+   */
+  _buildManualCardIndex(manualConfig) {
+    const cards = [];
+    for (const manualItem of manualConfig) {
+      if (manualItem.references) {
+        const filePath = path.resolve(this._config.destination, 'identifiers.html');
+        const html = fs.readFileSync(filePath).toString();
+        const $ = cheerio.load(html);
+        const card = $('.content').html();
+        const identifiers = this._findAllIdentifiersKindGrouping();
+        const sectionCount = identifiers.class.length +
+          identifiers.interface.length +
+          identifiers.function.length +
+          identifiers.typedef.length +
+          identifiers.external.length;
+
+        cards.push({label: 'References', link: 'identifiers.html', card: card, type: 'reference', sectionCount: sectionCount});
+        continue;
+      }
+
+      for (const filePath of manualItem.paths) {
+        const type = manualItem.type;
+        const fileName = this._getManualOutputFileName(manualItem, filePath);
+        const html = this._buildManual(manualItem, filePath);
+        const $root = cheerio.load(html).root();
+        const h1Count = $root.find('h1').length;
+        const sectionCount = $root.find('h1,h2,h3,h4,h5').length;
+
+        $root.find('h1').each((i, el)=>{
+          const $el = cheerio(el);
+          const label = $el.text();
+          const link = h1Count === 1 ? fileName : `${fileName}#${$el.attr('id')}`;
+          let card = `<h1>${label}</h1>`;
+          const nextAll = $el.nextAll();
+
+          for (let i = 0; i < nextAll.length; i++) {
+            const next = nextAll.get(i);
+            const tagName = next.tagName.toLowerCase();
+            if (tagName === 'h1') return;
+            const $next = cheerio(next);
+            card += `<${tagName}>${$next.html()}</${tagName}>`;
+          }
+
+          cards.push({label, link, card, type, sectionCount});
+        });
+      }
+    }
+
+    const ice = new IceCap(this._readTemplate('manualCardIndex.html'));
+    ice.loop('cards', cards, (i, card, ice)=>{
+      ice.text('label-inner', card.label);
+      ice.attr('label', 'class', `manual-color manual-color-${card.type}`);
+
+      const sectionCount = Math.min((card.sectionCount / 5) + 1, 5);
+      ice.attr('label', 'data-section-count', '■'.repeat(sectionCount));
+
+      ice.attr('link', 'href', card.link);
+      ice.load('card', card.card);
+    });
+
+    if (this._config.manual.index) {
+      const userIndex = this._convertMDToHTML(this._config.manual.index);
+      ice.load('manualUserIndex', userIndex);
+    } else {
+      ice.drop('manualUserIndex', true);
+    }
+
+    ice.drop('manualBadge', !this._config.manual.coverage);
+
+    return ice;
+  }
+
+  /**
    * built manual index.
    * @param {ManualConfigItem[]} manualConfig - target manual config.
    * @return {IceCap} built index.
@@ -168,8 +256,9 @@ export default class ManualDocBuilder extends DocBuilder {
    */
   _buildManualIndex(manualConfig) {
     const ice = new IceCap(this._readTemplate('manualIndex.html'));
+    const _manualConfig = manualConfig.filter((item) => (item.paths && item.paths.length) || item.references);
 
-    ice.loop('manual', manualConfig, (i, item, ice)=>{
+    ice.loop('manual', _manualConfig, (i, item, ice)=>{
       const toc = [];
       if (item.references) {
         const identifiers = this._findAllIdentifiersKindGrouping();
@@ -180,12 +269,19 @@ export default class ManualDocBuilder extends DocBuilder {
         if (identifiers.variable.length) toc.push({label: 'Variable', link: 'identifiers.html#variable', indent: 'indent-h2'});
         if (identifiers.typedef.length) toc.push({label: 'Typedef', link: 'identifiers.html#typedef', indent: 'indent-h2'});
         if (identifiers.external.length) toc.push({label: 'External', link: 'identifiers.html#external', indent: 'indent-h2'});
+
+        toc[0].sectionCount = identifiers.class.length +
+          identifiers.interface.length +
+          identifiers.function.length +
+          identifiers.typedef.length +
+          identifiers.external.length;
       } else {
         for (const filePath of item.paths) {
           const fileName = this._getManualOutputFileName(item, filePath);
           const html = this._convertMDToHTML(filePath);
           const $root = cheerio.load(html).root();
           const h1Count = $root.find('h1').length;
+          const sectionCount = $root.find('h1,h2,h3,h4,h5').length;
 
           $root.find('h1,h2,h3,h4,h5').each((i, el)=>{
             const $el = cheerio(el);
@@ -195,18 +291,25 @@ export default class ManualDocBuilder extends DocBuilder {
             let link = `${fileName}#${$el.attr('id')}`;
             if (el.tagName.toLowerCase() === 'h1' && h1Count === 1) link = fileName;
 
-            toc.push({label, link, indent});
+            toc.push({label, link, indent, sectionCount});
           });
         }
       }
 
       ice.attr('manual', 'data-toc-name', item.type);
-      // ice.text('title', item.label);
-      // ice.attr('title', 'href', this._getManualOutputFileName(item));
-      ice.loop('manualNav', toc, (i, item, ice)=>{
-        ice.attr('manualNav', 'class', item.indent);
-        ice.text('link', item.label);
-        ice.attr('link', 'href', item.link);
+      ice.loop('manualNav', toc, (i, tocItem, ice)=>{
+        if (tocItem.indent === 'indent-h1') {
+          const manualType = item.isCustom ? 'custom' : item.type;
+          ice.attr('manualNav', 'class', `${tocItem.indent} manual-color manual-color-${manualType}`);
+          const sectionCount = Math.min((tocItem.sectionCount / 5) + 1, 5);
+          ice.attr('manualNav', 'data-section-count', '■'.repeat(sectionCount));
+        } else {
+          ice.attr('manualNav', 'class', tocItem.indent);
+        }
+
+        ice.attr('manualNav', 'data-link', tocItem.link.split('#')[0]);
+        ice.text('link', tocItem.label);
+        ice.attr('link', 'href', tocItem.link);
       });
     });
 
@@ -240,32 +343,5 @@ export default class ManualDocBuilder extends DocBuilder {
     const html = markdown(content);
     const $root = cheerio.load(html).root();
     return $root.html();
-  }
-
-  /**
-   * get label synonyms.
-   * @param {string} label - target item label.
-   * @returns {string[]} synonyms
-   * @private
-   */
-  _getLabelSynonyms(label) {
-    switch (label.toLowerCase()) {
-      case 'overview':
-        return ['overview'];
-      case 'installation':
-        return ['installation', 'install'];
-      case 'tutorial':
-        return ['tutorial'];
-      case 'configuration':
-        return ['configuration', 'config'];
-      case 'usage':
-        return ['usage'];
-      case 'example':
-        return ['example', 'examples'];
-      case 'faq':
-        return ['faq'];
-      case 'changelog':
-        return ['changelog', 'change log'];
-    }
   }
 }
