@@ -31,7 +31,7 @@ export default class ManualDocBuilder extends DocBuilder {
       ice.text('title', 'Manual', IceCap.MODE_WRITE);
       ice.attr('baseUrl', 'href', baseUrl, IceCap.MODE_WRITE);
       ice.attr('rootContainer', 'class', ' manual-index');
-      callback(ice.html, fileName);
+      callback(ice.html, fileName, fileName);
 
       if (this._config.manual.globalIndex) {
         ice.attr('baseUrl', 'href', './', IceCap.MODE_WRITE);
@@ -50,7 +50,7 @@ export default class ManualDocBuilder extends DocBuilder {
         ice.load('nav', this._buildManualNav(manualConfig), IceCap.MODE_WRITE);
         ice.text('title', item.label, IceCap.MODE_WRITE);
         ice.attr('baseUrl', 'href', baseUrl, IceCap.MODE_WRITE);
-        callback(ice.html, fileName);
+        callback(ice.html, fileName, filePath);
       }
     }
 

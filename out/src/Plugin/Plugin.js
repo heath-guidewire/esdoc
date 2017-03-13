@@ -187,13 +187,14 @@ var Plugin = function () {
      * handle HTML.
      * @param {string} html - original HTML.
      * @param {string} fileName - the fileName of the HTML file.
+     * @param {string} [originalFilePath] - the file path of the original file being generated
      * @returns {string} handled HTML.
      */
 
   }, {
     key: 'onHandleHTML',
-    value: function onHandleHTML(html, fileName) {
-      var ev = new PluginEvent({ html: html, fileName: fileName });
+    value: function onHandleHTML(html, fileName, originalFilePath) {
+      var ev = new PluginEvent({ html: html, fileName: fileName, originalFilePath: originalFilePath });
       this._execHandler('onHandleHTML', ev);
       return ev.data.html;
     }

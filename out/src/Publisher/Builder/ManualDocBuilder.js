@@ -73,7 +73,7 @@ var ManualDocBuilder = function (_DocBuilder) {
         ice.text('title', 'Manual', _iceCap2.default.MODE_WRITE);
         ice.attr('baseUrl', 'href', baseUrl, _iceCap2.default.MODE_WRITE);
         ice.attr('rootContainer', 'class', ' manual-index');
-        callback(ice.html, fileName);
+        callback(ice.html, fileName, fileName);
 
         if (this._config.manual.globalIndex) {
           ice.attr('baseUrl', 'href', './', _iceCap2.default.MODE_WRITE);
@@ -106,7 +106,7 @@ var ManualDocBuilder = function (_DocBuilder) {
               ice.load('nav', this._buildManualNav(manualConfig), _iceCap2.default.MODE_WRITE);
               ice.text('title', item.label, _iceCap2.default.MODE_WRITE);
               ice.attr('baseUrl', 'href', _baseUrl, _iceCap2.default.MODE_WRITE);
-              callback(ice.html, _fileName);
+              callback(ice.html, _fileName, filePath);
             }
           } catch (err) {
             _didIteratorError2 = true;

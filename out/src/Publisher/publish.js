@@ -129,9 +129,9 @@ function publish(values, asts, config) {
     console.log(text);
   }
 
-  function writeHTML(html, fileName) {
+  function writeHTML(html, fileName, originalFilePath) {
     log(fileName);
-    html = _Plugin2.default.onHandleHTML(html, fileName);
+    html = _Plugin2.default.onHandleHTML(html, fileName, originalFilePath);
     var filePath = _path2.default.resolve(config.destination, fileName);
     _fsExtra2.default.outputFileSync(filePath, html, { encoding: 'utf8' });
   }

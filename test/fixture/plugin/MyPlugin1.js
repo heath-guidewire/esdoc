@@ -41,10 +41,10 @@ exports.onHandleTag = function(ev) {
 exports.onHandleHTML = function(ev) {
   callInfo.handlerNames.onHandleHTML = ['MyPlugin1'];
   ev.data.html = ev.data.html.replace('MyClass_ModifiedCode_ModifiedAST_ModifiedTag', 'MyClass_ModifiedCode_ModifiedAST_ModifiedTag_ModifiedHTML');
-  // insert ev.data.fileName into <head />
+  // insert ev.data.fileName and ev.data.originalFilePath into <head />
   ev.data.html = ev.data.html.replace(
     '</head>',
-    `<meta name="x-from-plugin" content="fileName:${ev.data.fileName}" />\n</head>`
+    `<meta name="x-from-plugin" content="fileName:${ev.data.fileName}" />\n<meta name="x-from-plugin-2" content="originalFilePath:${ev.data.originalfilePath}" />\n</head>`
   );
 };
 

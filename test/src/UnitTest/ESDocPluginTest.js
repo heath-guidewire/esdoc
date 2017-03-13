@@ -38,6 +38,7 @@ describe('Plugin:', ()=>{
     assert.includes(doc, 'head title', 'Modified Config');
     assert.includes(doc, '.navigation', 'MyClass_ModifiedCode_ModifiedAST_ModifiedTag_ModifiedHTML');
     assert.includes(doc, 'head meta[name="x-from-plugin"]', 'fileName:', 'content');
+    assert.includes(doc, 'head meta[name="x-from-plugin-2"]', 'originalFilePath:undefined', 'content');
   });
 
   it('call multi plugins', ()=>{
