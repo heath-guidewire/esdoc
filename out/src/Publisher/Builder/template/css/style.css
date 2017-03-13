@@ -867,6 +867,7 @@ h1 .esdoc-coverage {
 .manual-root .navigation {
   padding-left: 4px;
   margin-top: 4px;
+  background-color: white;
 }
 
 .navigation .manual-toc {
