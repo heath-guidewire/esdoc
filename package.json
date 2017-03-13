@@ -1,6 +1,6 @@
 {
   "name": "esdoc",
-  "version": "0.5.1-alpha",
+  "version": "0.5.2-gwre",
   "description": "Documentation Generator For JavaScript(ES6)",
   "author": "h13i32maru",
   "homepage": "https://esdoc.org/",
@@ -11,9 +11,8 @@
   },
   "maintainers": [
     {
-      "name": "Mike Leahy",
-      "email": "support@typhonjs.io",
-      "url": "https://github.com/typhonrt"
+      "name": "Heath Chiavettone",
+      "url": "https://github.com/heath-guidewire"
     }
   ],
   "scripts": {
