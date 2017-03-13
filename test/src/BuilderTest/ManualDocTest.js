@@ -280,6 +280,10 @@ describe('test manual', ()=>{
       const doc = readDoc('manual/custom_page_1/customPage1.html');
       assert.includes(doc, '.github-markdown h1', 'Custom Page 1');
       assert.includes(doc, '.github-markdown [data-ice="content"]', 'Foo 1');
+      assert.includes(doc, '.github-markdown [data-ice="content"] table tbody tr th:nth-of-type(1)', 'Question');
+      assert.includes(doc, '.github-markdown [data-ice="content"] table tbody tr th:nth-of-type(2)', 'Answer');
+      assert.includes(doc, '.github-markdown [data-ice="content"] table tbody tr td:nth-of-type(1)', 'Did this translate to the manual?');
+      assert.includes(doc, '.github-markdown [data-ice="content"] table tbody tr td:nth-of-type(2)', 'I hope so');
     });
 
     it('has custom page 2', ()=>{
