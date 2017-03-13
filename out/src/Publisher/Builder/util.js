@@ -78,8 +78,8 @@ function shorten(doc) {
 function markdown(text) {
   var breaks = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-  var availableTags = ['span', 'a', 'p', 'div', 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'br', 'hr', 'li', 'ul', 'ol', 'code', 'pre'];
-  var availableAttributes = ['src', 'href', 'title', 'class', 'id', 'name', 'width', 'height'];
+  var availableTags = ['span', 'a', 'p', 'div', 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'br', 'hr', 'li', 'ul', 'ol', 'code', 'pre', 'table', 'tbody', 'th', 'td', 'tr'];
+  var availableAttributes = ['src', 'href', 'title', 'class', 'id', 'name', 'width', 'height', 'valign'];
 
   var compiled = (0, _marked2.default)(text, {
     gfm: true,
