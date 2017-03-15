@@ -61,7 +61,7 @@ export function shorten(doc, asMarkdown = false) {
  */
 export function markdown(text, breaks = false) {
   const availableTags = ['span', 'a', 'p', 'div', 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'br', 'hr', 'li', 'ul', 'ol', 'code', 'pre', 'table', 'tbody', 'th', 'td', 'tr'];
-  const availableAttributes = ['src', 'href', 'title', 'class', 'id', 'name', 'width', 'height', 'valign'];
+  const availableAttributes = ['src', 'href', 'title', 'class', 'id', 'name', 'width', 'height', 'valign', 'target'];
 
   let compiled = marked(text, {
     gfm: true,
