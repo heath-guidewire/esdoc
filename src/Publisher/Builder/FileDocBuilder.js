@@ -17,10 +17,15 @@ export default class FileDocBuilder extends DocBuilder {
       let fileName = this._getOutputFileName(doc);
       let baseUrl = this._getBaseUrl(fileName);
       let title = this._getTitle(doc);
-      ice.load('content', this._buildFileDoc(doc), IceCap.MODE_WRITE);
-      ice.attr('baseUrl', 'href', baseUrl, IceCap.MODE_WRITE);
-      ice.text('title', title, IceCap.MODE_WRITE);
-      callback(ice.html, fileName);
+      try {
+        ice.load('content', this._buildFileDoc(doc), IceCap.MODE_WRITE);
+        ice.attr('baseUrl', 'href', baseUrl, IceCap.MODE_WRITE);
+        ice.text('title', title, IceCap.MODE_WRITE);
+        callback(ice.html, fileName);
+      } catch (error) {
+        console.log(`FileDocBuilder encountered error while processing: ${fileName}`, error);
+        throw error;
+      }
     }
   }
 
