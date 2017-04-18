@@ -912,133 +912,138 @@ var DocBuilder = function () {
     value: function _buildTypeDocLinkHTML(typeName) {
       var _this4 = this;
 
-      // e.g. number[]
-      var matched = typeName.match(/^(.*?)\[\]$/);
-      if (matched) {
-        typeName = matched[1];
-        return '<span>' + this._buildDocLinkHTML(typeName, typeName) + '<span>[]</span></span>';
-      }
+      try {
+        // e.g. number[]
+        var matched = typeName.match(/^(.*?)\[\]$/);
+        if (matched) {
+          typeName = matched[1];
+          return '<span>' + this._buildDocLinkHTML(typeName, typeName) + '<span>[]</span></span>';
+        }
 
-      // e.g. function(a: number, b: string): boolean
-      matched = typeName.match(/function *\((.*?)\)(.*)/);
-      if (matched) {
-        var functionLink = this._buildDocLinkHTML('function');
-        if (!matched[1] && !matched[2]) return '<span>' + functionLink + '<span>()</span></span>';
+        // e.g. function(a: number, b: string): boolean
+        matched = typeName.match(/function *\((.*?)\)(.*)/);
+        if (matched) {
+          var functionLink = this._buildDocLinkHTML('function');
+          if (!matched[1] && !matched[2]) return '<span>' + functionLink + '<span>()</span></span>';
 
-        var innerTypes = [];
-        if (matched[1]) {
+          var innerTypes = [];
+          if (matched[1]) {
+            // bad hack: Map.<string, boolean> => Map.<string\Z boolean>
+            // bad hack: {a: string, b: boolean} => {a\Y string\Z b\Y boolean}
+            var inner = matched[1].replace(/<.*?>/g, function (a) {
+              return a.replace(/,/g, '\\Z');
+            }).replace(/{.*?}/g, function (a) {
+              return a.replace(/,/g, '\\Z').replace(/:/g, '\\Y');
+            });
+            innerTypes = inner.split(',').map(function (v) {
+              var tmp = v.split(':').map(function (v) {
+                return v.trim();
+              });
+              var paramName = tmp[0];
+              var typeName = tmp[1].replace(/\\Z/g, ',').replace(/\\Y/g, ':');
+              return paramName + ': ' + _this4._buildTypeDocLinkHTML(typeName);
+            });
+          }
+
+          var returnType = '';
+          if (matched[2]) {
+            var type = matched[2].split(':')[1];
+            if (type) returnType = ': ' + this._buildTypeDocLinkHTML(type.trim());
+          }
+
+          return '<span>' + functionLink + '<span>(' + innerTypes.join(', ') + ')</span>' + returnType + '</span>';
+        }
+
+        // e.g. {a: number, b: string}
+        matched = typeName.match(/^\{(.*?)\}$/);
+        if (matched) {
+          if (!matched[1]) return '{}';
+
           // bad hack: Map.<string, boolean> => Map.<string\Z boolean>
           // bad hack: {a: string, b: boolean} => {a\Y string\Z b\Y boolean}
-          var inner = matched[1].replace(/<.*?>/g, function (a) {
+          var _inner = matched[1].replace(/<.*?>/g, function (a) {
             return a.replace(/,/g, '\\Z');
           }).replace(/{.*?}/g, function (a) {
             return a.replace(/,/g, '\\Z').replace(/:/g, '\\Y');
           });
-          innerTypes = inner.split(',').map(function (v) {
+          var _innerTypes = _inner.split(',').map(function (v) {
             var tmp = v.split(':').map(function (v) {
               return v.trim();
             });
             var paramName = tmp[0];
             var typeName = tmp[1].replace(/\\Z/g, ',').replace(/\\Y/g, ':');
-            return paramName + ': ' + _this4._buildTypeDocLinkHTML(typeName);
-          });
-        }
+            if (typeName.includes('|')) {
+              typeName = typeName.replace(/^\(/, '').replace(/\)$/, '');
+              var typeNames = typeName.split('|').map(function (v) {
+                return v.trim();
+              });
+              var html = [];
+              var _iteratorNormalCompletion5 = true;
+              var _didIteratorError5 = false;
+              var _iteratorError5 = undefined;
 
-        var returnType = '';
-        if (matched[2]) {
-          var type = matched[2].split(':')[1];
-          if (type) returnType = ': ' + this._buildTypeDocLinkHTML(type.trim());
-        }
-
-        return '<span>' + functionLink + '<span>(' + innerTypes.join(', ') + ')</span>' + returnType + '</span>';
-      }
-
-      // e.g. {a: number, b: string}
-      matched = typeName.match(/^\{(.*?)\}$/);
-      if (matched) {
-        if (!matched[1]) return '{}';
-
-        // bad hack: Map.<string, boolean> => Map.<string\Z boolean>
-        // bad hack: {a: string, b: boolean} => {a\Y string\Z b\Y boolean}
-        var _inner = matched[1].replace(/<.*?>/g, function (a) {
-          return a.replace(/,/g, '\\Z');
-        }).replace(/{.*?}/g, function (a) {
-          return a.replace(/,/g, '\\Z').replace(/:/g, '\\Y');
-        });
-        var _innerTypes = _inner.split(',').map(function (v) {
-          var tmp = v.split(':').map(function (v) {
-            return v.trim();
-          });
-          var paramName = tmp[0];
-          var typeName = tmp[1].replace(/\\Z/g, ',').replace(/\\Y/g, ':');
-          if (typeName.includes('|')) {
-            typeName = typeName.replace(/^\(/, '').replace(/\)$/, '');
-            var typeNames = typeName.split('|').map(function (v) {
-              return v.trim();
-            });
-            var html = [];
-            var _iteratorNormalCompletion5 = true;
-            var _didIteratorError5 = false;
-            var _iteratorError5 = undefined;
-
-            try {
-              for (var _iterator5 = typeNames[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                var unionType = _step5.value;
-
-                html.push(_this4._buildTypeDocLinkHTML(unionType));
-              }
-            } catch (err) {
-              _didIteratorError5 = true;
-              _iteratorError5 = err;
-            } finally {
               try {
-                if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                  _iterator5.return();
+                for (var _iterator5 = typeNames[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                  var unionType = _step5.value;
+
+                  html.push(_this4._buildTypeDocLinkHTML(unionType));
                 }
+              } catch (err) {
+                _didIteratorError5 = true;
+                _iteratorError5 = err;
               } finally {
-                if (_didIteratorError5) {
-                  throw _iteratorError5;
+                try {
+                  if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                    _iterator5.return();
+                  }
+                } finally {
+                  if (_didIteratorError5) {
+                    throw _iteratorError5;
+                  }
                 }
               }
+
+              return paramName + ': ' + html.join('|');
+            } else {
+              return paramName + ': ' + _this4._buildTypeDocLinkHTML(typeName);
             }
+          });
 
-            return paramName + ': ' + html.join('|');
-          } else {
-            return paramName + ': ' + _this4._buildTypeDocLinkHTML(typeName);
-          }
-        });
+          return '{' + _innerTypes.join(', ') + '}';
+        }
 
-        return '{' + _innerTypes.join(', ') + '}';
-      }
+        // e.g. Map<number, string>
+        matched = typeName.match(/^(.*?)\.?<(.*?)>$/);
+        if (matched) {
+          var mainType = matched[1];
+          // bad hack: Map.<string, boolean> => Map.<string\Z boolean>
+          // bad hack: {a: string, b: boolean} => {a\Y string\Z b\Y boolean}
+          var _inner2 = matched[2].replace(/<.*?>/g, function (a) {
+            return a.replace(/,/g, '\\Z');
+          }).replace(/{.*?}/g, function (a) {
+            return a.replace(/,/g, '\\Z').replace(/:/g, '\\Y');
+          });
+          var _innerTypes2 = _inner2.split(',').map(function (v) {
+            v = v.trim().replace(/\\Z/g, ',').replace(/\\Y/g, ':');
+            return _this4._buildTypeDocLinkHTML(v);
+          });
 
-      // e.g. Map<number, string>
-      matched = typeName.match(/^(.*?)\.?<(.*?)>$/);
-      if (matched) {
-        var mainType = matched[1];
-        // bad hack: Map.<string, boolean> => Map.<string\Z boolean>
-        // bad hack: {a: string, b: boolean} => {a\Y string\Z b\Y boolean}
-        var _inner2 = matched[2].replace(/<.*?>/g, function (a) {
-          return a.replace(/,/g, '\\Z');
-        }).replace(/{.*?}/g, function (a) {
-          return a.replace(/,/g, '\\Z').replace(/:/g, '\\Y');
-        });
-        var _innerTypes2 = _inner2.split(',').map(function (v) {
-          v = v.trim().replace(/\\Z/g, ',').replace(/\\Y/g, ':');
-          return _this4._buildTypeDocLinkHTML(v);
-        });
+          var html = this._buildDocLinkHTML(mainType, mainType) + '<' + _innerTypes2.join(', ') + '>';
+          return html;
+        }
 
-        var html = this._buildDocLinkHTML(mainType, mainType) + '<' + _innerTypes2.join(', ') + '>';
-        return html;
-      }
-
-      if (typeName.indexOf('...') === 0) {
-        typeName = typeName.replace('...', '');
-        return '...' + this._buildDocLinkHTML(typeName);
-      } else if (typeName.indexOf('?') === 0) {
-        typeName = typeName.replace('?', '');
-        return '?' + this._buildDocLinkHTML(typeName);
-      } else {
-        return this._buildDocLinkHTML(typeName);
+        if (typeName.indexOf('...') === 0) {
+          typeName = typeName.replace('...', '');
+          return '...' + this._buildDocLinkHTML(typeName);
+        } else if (typeName.indexOf('?') === 0) {
+          typeName = typeName.replace('?', '');
+          return '?' + this._buildDocLinkHTML(typeName);
+        } else {
+          return this._buildDocLinkHTML(typeName);
+        }
+      } catch (error) {
+        console.log('Exception encountered while parsing: ' + typeName, error);
+        throw error;
       }
     }
 
