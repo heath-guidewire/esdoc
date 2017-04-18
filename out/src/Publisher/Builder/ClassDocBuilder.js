@@ -60,10 +60,15 @@ var ClassDocBuilder = function (_DocBuilder) {
           var fileName = this._getOutputFileName(doc);
           var baseUrl = this._getBaseUrl(fileName);
           var title = this._getTitle(doc);
-          ice.load('content', this._buildClassDoc(doc), _iceCap2.default.MODE_WRITE);
-          ice.attr('baseUrl', 'href', baseUrl, _iceCap2.default.MODE_WRITE);
-          ice.text('title', title, _iceCap2.default.MODE_WRITE);
-          callback(ice.html, fileName);
+          try {
+            ice.load('content', this._buildClassDoc(doc), _iceCap2.default.MODE_WRITE);
+            ice.attr('baseUrl', 'href', baseUrl, _iceCap2.default.MODE_WRITE);
+            ice.text('title', title, _iceCap2.default.MODE_WRITE);
+            callback(ice.html, fileName);
+          } catch (error) {
+            console.log('ClassDocBuilder encountered error while processing: ' + fileName, error);
+            throw error;
+          }
         }
       } catch (err) {
         _didIteratorError = true;
