@@ -517,28 +517,33 @@ var DocBuilder = function () {
 
       ice.text('title', title);
       ice.loop('target', docs, function (i, doc, ice) {
-        ice.text('generator', doc.generator ? '*' : '');
-        ice.load('name', _this2._buildDocLinkHTML(doc.longname, null, innerLink, doc.kind));
-        ice.load('signature', _this2._buildSignatureHTML(doc));
-        ice.load('description', (0, _util.shorten)(doc, true));
-        ice.text('abstract', doc.abstract ? 'abstract' : '');
-        ice.text('access', doc.access);
-        if (['get', 'set'].includes(doc.kind)) {
-          ice.text('kind', doc.kind);
-        } else {
-          ice.drop('kind');
-        }
+        try {
+          ice.text('generator', doc.generator ? '*' : '');
+          ice.load('name', _this2._buildDocLinkHTML(doc.longname, null, innerLink, doc.kind));
+          ice.load('signature', _this2._buildSignatureHTML(doc));
+          ice.load('description', (0, _util.shorten)(doc, true));
+          ice.text('abstract', doc.abstract ? 'abstract' : '');
+          ice.text('access', doc.access);
+          if (['get', 'set'].includes(doc.kind)) {
+            ice.text('kind', doc.kind);
+          } else {
+            ice.drop('kind');
+          }
 
-        if (['member', 'method', 'get', 'set'].includes(doc.kind)) {
-          ice.text('static', doc.static ? 'static' : '');
-        } else {
-          ice.drop('static');
-        }
+          if (['member', 'method', 'get', 'set'].includes(doc.kind)) {
+            ice.text('static', doc.static ? 'static' : '');
+          } else {
+            ice.drop('static');
+          }
 
-        ice.text('since', doc.since);
-        ice.load('deprecated', _this2._buildDeprecatedHTML(doc));
-        ice.load('experimental', _this2._buildExperimentalHTML(doc));
-        ice.text('version', doc.version);
+          ice.text('since', doc.since);
+          ice.load('deprecated', _this2._buildDeprecatedHTML(doc));
+          ice.load('experimental', _this2._buildExperimentalHTML(doc));
+          ice.text('version', doc.version);
+        } catch (err) {
+          console.log('Exception processing summary doc for ' + doc.longname);
+          throw err;
+        }
       });
 
       return ice;
@@ -616,140 +621,145 @@ var DocBuilder = function () {
       ice.drop('title', !docs.length);
 
       ice.loop('detail', docs, function (i, doc, ice) {
-        var scope = doc.static ? 'static' : 'instance';
-        ice.attr('anchor', 'id', scope + '-' + doc.kind + '-' + doc.name);
-        ice.text('generator', doc.generator ? '*' : '');
-        ice.text('name', doc.name);
-        ice.load('signature', _this3._buildSignatureHTML(doc));
-        ice.load('description', doc.description);
-        ice.text('abstract', doc.abstract ? 'abstract' : '');
-        ice.text('access', doc.access);
-        if (['get', 'set'].includes(doc.kind)) {
-          ice.text('kind', doc.kind);
-        } else {
-          ice.drop('kind');
-        }
-        if (doc.export && doc.importPath && doc.importStyle) {
-          var link = _this3._buildFileDocLinkHTML(doc, doc.importPath);
-          ice.into('importPath', 'import ' + doc.importStyle + ' from \'' + link + '\'', function (code, ice) {
-            ice.load('importPathCode', code);
-          });
-        } else {
-          ice.drop('importPath');
-        }
-
-        if (['member', 'method', 'get', 'set'].includes(doc.kind)) {
-          ice.text('static', doc.static ? 'static' : '');
-        } else {
-          ice.drop('static');
-        }
-
-        ice.load('source', _this3._buildFileDocLinkHTML(doc, 'source'));
-        ice.text('since', doc.since, 'append');
-        ice.load('deprecated', _this3._buildDeprecatedHTML(doc));
-        ice.load('experimental', _this3._buildExperimentalHTML(doc));
-        ice.text('version', doc.version, 'append');
-        ice.load('see', _this3._buildDocsLinkHTML(doc.see), 'append');
-        ice.load('todo', _this3._buildDocsLinkHTML(doc.todo), 'append');
-        ice.load('override', _this3._buildOverrideMethod(doc));
-
-        var isFunction = false;
-        if (['method', 'constructor', 'function'].indexOf(doc.kind) !== -1) isFunction = true;
-        if (doc.kind === 'typedef' && doc.params && doc.type.types[0] === 'function') isFunction = true;
-
-        if (isFunction) {
-          ice.load('properties', _this3._buildProperties(doc.params, 'Params:'));
-        } else {
-          ice.load('properties', _this3._buildProperties(doc.properties, 'Properties:'));
-        }
-
-        // return
-        if (doc.return) {
-          ice.load('returnDescription', doc.return.description);
-          var typeNames = [];
-          var _iteratorNormalCompletion4 = true;
-          var _didIteratorError4 = false;
-          var _iteratorError4 = undefined;
-
-          try {
-            for (var _iterator4 = doc.return.types[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-              var typeName = _step4.value;
-
-              typeNames.push(_this3._buildTypeDocLinkHTML(typeName));
-            }
-          } catch (err) {
-            _didIteratorError4 = true;
-            _iteratorError4 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                _iterator4.return();
-              }
-            } finally {
-              if (_didIteratorError4) {
-                throw _iteratorError4;
-              }
-            }
-          }
-
-          if (typeof doc.return.nullable === 'boolean') {
-            var nullable = doc.return.nullable;
-            ice.load('returnType', typeNames.join(' | ') + (' (nullable: ' + nullable + ')'));
+        try {
+          var scope = doc.static ? 'static' : 'instance';
+          ice.attr('anchor', 'id', scope + '-' + doc.kind + '-' + doc.name);
+          ice.text('generator', doc.generator ? '*' : '');
+          ice.text('name', doc.name);
+          ice.load('signature', _this3._buildSignatureHTML(doc));
+          ice.load('description', doc.description);
+          ice.text('abstract', doc.abstract ? 'abstract' : '');
+          ice.text('access', doc.access);
+          if (['get', 'set'].includes(doc.kind)) {
+            ice.text('kind', doc.kind);
           } else {
-            ice.load('returnType', typeNames.join(' | '));
+            ice.drop('kind');
+          }
+          if (doc.export && doc.importPath && doc.importStyle) {
+            var link = _this3._buildFileDocLinkHTML(doc, doc.importPath);
+            ice.into('importPath', 'import ' + doc.importStyle + ' from \'' + link + '\'', function (code, ice) {
+              ice.load('importPathCode', code);
+            });
+          } else {
+            ice.drop('importPath');
           }
 
-          ice.load('returnProperties', _this3._buildProperties(doc.properties, 'Return Properties:'));
-        } else {
-          ice.drop('returnParams');
+          if (['member', 'method', 'get', 'set'].includes(doc.kind)) {
+            ice.text('static', doc.static ? 'static' : '');
+          } else {
+            ice.drop('static');
+          }
+
+          ice.load('source', _this3._buildFileDocLinkHTML(doc, 'source'));
+          ice.text('since', doc.since, 'append');
+          ice.load('deprecated', _this3._buildDeprecatedHTML(doc));
+          ice.load('experimental', _this3._buildExperimentalHTML(doc));
+          ice.text('version', doc.version, 'append');
+          ice.load('see', _this3._buildDocsLinkHTML(doc.see), 'append');
+          ice.load('todo', _this3._buildDocsLinkHTML(doc.todo), 'append');
+          ice.load('override', _this3._buildOverrideMethod(doc));
+
+          var isFunction = false;
+          if (['method', 'constructor', 'function'].indexOf(doc.kind) !== -1) isFunction = true;
+          if (doc.kind === 'typedef' && doc.params && doc.type.types[0] === 'function') isFunction = true;
+
+          if (isFunction) {
+            ice.load('properties', _this3._buildProperties(doc.params, 'Params:'));
+          } else {
+            ice.load('properties', _this3._buildProperties(doc.properties, 'Properties:'));
+          }
+
+          // return
+          if (doc.return) {
+            ice.load('returnDescription', doc.return.description);
+            var typeNames = [];
+            var _iteratorNormalCompletion4 = true;
+            var _didIteratorError4 = false;
+            var _iteratorError4 = undefined;
+
+            try {
+              for (var _iterator4 = doc.return.types[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                var typeName = _step4.value;
+
+                typeNames.push(_this3._buildTypeDocLinkHTML(typeName));
+              }
+            } catch (err) {
+              _didIteratorError4 = true;
+              _iteratorError4 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                  _iterator4.return();
+                }
+              } finally {
+                if (_didIteratorError4) {
+                  throw _iteratorError4;
+                }
+              }
+            }
+
+            if (typeof doc.return.nullable === 'boolean') {
+              var nullable = doc.return.nullable;
+              ice.load('returnType', typeNames.join(' | ') + (' (nullable: ' + nullable + ')'));
+            } else {
+              ice.load('returnType', typeNames.join(' | '));
+            }
+
+            ice.load('returnProperties', _this3._buildProperties(doc.properties, 'Return Properties:'));
+          } else {
+            ice.drop('returnParams');
+          }
+
+          // throws
+          if (doc.throws) {
+            ice.loop('throw', doc.throws, function (i, exceptionDoc, ice) {
+              ice.load('throwName', _this3._buildDocLinkHTML(exceptionDoc.types[0]));
+              ice.load('throwDesc', exceptionDoc.description);
+            });
+          } else {
+            ice.drop('throwWrap');
+          }
+
+          // fires
+          if (doc.emits) {
+            ice.loop('emit', doc.emits, function (i, emitDoc, ice) {
+              ice.load('emitName', _this3._buildDocLinkHTML(emitDoc.types[0]));
+              ice.load('emitDesc', emitDoc.description);
+            });
+          } else {
+            ice.drop('emitWrap');
+          }
+
+          // listens
+          if (doc.listens) {
+            ice.loop('listen', doc.listens, function (i, listenDoc, ice) {
+              ice.load('listenName', _this3._buildDocLinkHTML(listenDoc.types[0]));
+              ice.load('listenDesc', listenDoc.description);
+            });
+          } else {
+            ice.drop('listenWrap');
+          }
+
+          // example
+          ice.into('example', doc.examples, function (examples, ice) {
+            ice.loop('exampleDoc', examples, function (i, exampleDoc, ice) {
+              var parsed = (0, _util.parseExample)(exampleDoc);
+              ice.text('exampleCode', parsed.body);
+              ice.text('exampleCaption', parsed.caption);
+            });
+          });
+
+          // tests
+          ice.into('tests', doc._custom_tests, function (tests, ice) {
+            ice.loop('test', tests, function (i, test, ice) {
+              var testDoc = _this3._find({ longname: test })[0];
+              ice.load('test', _this3._buildFileDocLinkHTML(testDoc, testDoc.testFullDescription));
+            });
+          });
+        } catch (err) {
+          console.log('Exception processing detail doc for ' + doc.longname);
+          throw err;
         }
-
-        // throws
-        if (doc.throws) {
-          ice.loop('throw', doc.throws, function (i, exceptionDoc, ice) {
-            ice.load('throwName', _this3._buildDocLinkHTML(exceptionDoc.types[0]));
-            ice.load('throwDesc', exceptionDoc.description);
-          });
-        } else {
-          ice.drop('throwWrap');
-        }
-
-        // fires
-        if (doc.emits) {
-          ice.loop('emit', doc.emits, function (i, emitDoc, ice) {
-            ice.load('emitName', _this3._buildDocLinkHTML(emitDoc.types[0]));
-            ice.load('emitDesc', emitDoc.description);
-          });
-        } else {
-          ice.drop('emitWrap');
-        }
-
-        // listens
-        if (doc.listens) {
-          ice.loop('listen', doc.listens, function (i, listenDoc, ice) {
-            ice.load('listenName', _this3._buildDocLinkHTML(listenDoc.types[0]));
-            ice.load('listenDesc', listenDoc.description);
-          });
-        } else {
-          ice.drop('listenWrap');
-        }
-
-        // example
-        ice.into('example', doc.examples, function (examples, ice) {
-          ice.loop('exampleDoc', examples, function (i, exampleDoc, ice) {
-            var parsed = (0, _util.parseExample)(exampleDoc);
-            ice.text('exampleCode', parsed.body);
-            ice.text('exampleCaption', parsed.caption);
-          });
-        });
-
-        // tests
-        ice.into('tests', doc._custom_tests, function (tests, ice) {
-          ice.loop('test', tests, function (i, test, ice) {
-            var testDoc = _this3._find({ longname: test })[0];
-            ice.load('test', _this3._buildFileDocLinkHTML(testDoc, testDoc.testFullDescription));
-          });
-        });
       });
 
       return ice;
